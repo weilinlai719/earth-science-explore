@@ -13,12 +13,12 @@ async function processData() {
         const response = await axios.get(url, {
         timeout: 180000 
     });
-        // 關鍵修正：NOAA 回傳的是 rows
+        
         if (response.data && response.data.table && response.data.table.rows) {
             const rawRows = response.data.table.rows;
             console.log(`成功獲取 ${rawRows.length} 筆數據點，開始處理...`);
 
-            // 1. 整理為三維格式 (時間, 緯度, 經度, 距平值)
+            // 整理為三維格式 (時間, 緯度, 經度, 距平值)
             const formattedData = rawRows.map(row => ({
                 t: row[0].split('T')[0],
                 lat: row[2],
@@ -30,8 +30,8 @@ async function processData() {
             const summaryPath = path.join(__dirname, `report_summary_${year}.json`);
             fs.writeFileSync(summaryPath, JSON.stringify(formattedData));
             console.log(`✅ 完整數據已存至 sst_taiwan_${year}_full.json`);
-
-            // 2. 自動計算「每月平均距平值」（用於報告的核心分析）
+            
+            // 每月平均距平值
             const monthlySum = {};
             formattedData.forEach(item => {
                 const month = item.t.substring(0, 7); // 取得 "2023-01" 格式
