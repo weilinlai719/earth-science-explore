@@ -125,17 +125,19 @@ let allData = [];
             });
         });
 
-        const trace = {
-            x: lons,
-            y: lats,
-            z: zData,
-            type: 'heatmap',
-            colorscale: 'RdBu',
-            reversescale: true,
-            zsmooth: 'best', 
-            zmid: 0,            
-            connectgaps: true   
-        };
+       const trace = {
+    x: lons,
+    y: lats,
+    z: zData,
+    type: 'heatmap',
+    colorscale: 'RdBu',
+    reversescale: true,  // 確保：正值 = 紅色, 負值 = 藍色
+    zmid: 0,             // 確保 0 絕對是白色
+    zmin: -1.5,   // 數值低於 -1.5 顯示深藍
+    zmax: 1.5,    // 數值高於 1.5 顯示深紅
+    zsmooth: 'best',
+    connectgaps: true
+};
 
         const layout = {
             title: { text: `<b>${month} 台灣海域海溫距平分布</b>`, font: { size: 20 } },
