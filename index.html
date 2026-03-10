@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>2023 聖嬰現象探索：台灣海域海溫分析</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        :root { --primary-color: #2c3e50; }
+        body { font-family: "Microsoft JhengHei", sans-serif; background: #ececec; display: flex; justify-content: center; padding: 20px; }
+        .dashboard { width: 900px; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+        
+        /* 圖片容器與箭頭 */
+        .carousel-container { position: relative; display: flex; align-items: center; justify-content: center; margin: 20px 0; background: #f9f9f9; border-radius: 10px; }
+        #chart { width: 100%; height: 500px; }
+        .arrow { cursor: pointer; position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.2); color: white; border: none; padding: 15px; border-radius: 50%; font-size: 20px; transition: 0.3s; }
+        .arrow:hover { background: var(--primary-color); }
+        .prev { left: 10px; }
+        .next { right: 10px; }
+
+        /* 月份標籤與文字描述 */
+        .info-section { margin-top: 20px; text-align: left; padding: 20px; border-top: 2px solid #eee; }
+        .month-tag { display: inline-block; background: var(--primary-color); color: white; padding: 5px 15px; border-radius: 5px; font-weight: bold; margin-bottom: 10px; }
+        #feature-text { font-size: 1.1rem; line-height: 1.6; color: #555; height: 100px; }
+        
+        /* 下方分頁點 */
+        .dots { margin-top: 10px; }
+        .dot { height: 10px; width: 10px; background-color: #bbb; border-radius: 50%; display: inline-block; margin: 0 5px; cursor: pointer; }
+        .dot.active { background-color: var(--primary-color); }
+    </style>
+</head>
+<body>
+
+<div class="dashboard">
+    <h1>2023 聖嬰事件：台灣周邊海溫異常分佈</h1>
+    
+    <div class="carousel-container">
+        <button class="arrow prev" onclick="changeMonth(-1)">&#10094;</button>
+        <div id="chart"></div>
+        <button class="arrow next" onclick="changeMonth(1)">&#10095;</button>
+    </div>
+
+    <div class="dots" id="dot-container"></div>
+
+    <div class="info-section">
+        <div class="month-tag" id="month-label">2023-01</div>
+        <h3>各月份特徵分析：</h3>
+        <p id="feature-text">正在載入數據...</p>
+    </div>
+</div>
+
+<script>
+let allData = [];
+    let currentIdx = 0;
+    let months = [];
+
+    const featureDescriptions = {
+        "2023-01": "年初仍受反聖嬰現象餘波影響，台灣周邊海溫距平值多為負值（藍色），顯示海溫偏低。",
+        "2023-07": "聖嬰現象於夏季正式確立。觀察到南部海域開始出現暖色調（正距平），熱量開始累積。",
+        "2023-11": "聖嬰現象達到強盛期。台灣周邊海域距平值顯著增加，呈現大面積紅橘色，異常升溫明顯。",
+        "2023-12": "年底海溫持續維持高位，顯示聖嬰現象對冬半年的持續性影響，與全球暖冬趨勢一致。"
+    };
+
+    async function init() {
+        try {
+            console.log("正在載入 JSON...");
+            const response = await fetch('sst_taiwan_2023_full.json');
+            allData = await response.json();
+            
+            // 確保日期排序與提取
+            months = [...new Set(allData.map(d => d.t.substring(0, 7)))].filter(m => m).sort();
+            console.log("成功解析月份:", months);
+
+            const dotContainer = document.getElementById('dot-container');
+            dotContainer.innerHTML = '';
+            months.forEach((m, i) => {
+                const dot = document.createElement('span');
+                dot.className = `dot ${i === 0 ? 'active' : ''}`;
+                dot.onclick = () => jumpToMonth(i);
+                dotContainer.appendChild(dot);
+            });
+
+            updateUI();
+        } catch (err) {
+            console.error("初始化失敗:", err);
+            document.getElementById('feature-text').innerText = "資料載入失敗，請確認 JSON 檔案路徑與伺服器狀態。";
+        }
+    }
+
+    function updateUI() {
+        if (months.length === 0) return;
+        const targetMonth = months[currentIdx];
+        
+        document.getElementById('month-label').innerText = targetMonth;
+        document.getElementById('feature-text').innerText = 
+            featureDescriptions[targetMonth] || "此月份海溫隨聖嬰現象發展呈現動態變動，觀察重點在於距平值的正負轉換。";
+
+        document.querySelectorAll('.dot').forEach((d, i) => {
+            d.className = i === currentIdx ? 'dot active' : 'dot';
+        });
+
+        drawChart(targetMonth);
+    }
+
+    function drawChart(month) {
+        // 1. 過濾該月份數據
+       const monthData = allData.filter(d => d.t.startsWith(month) && d.v !== null);
+        
+        if (monthData.length === 0) {
+            // 如果該月全是 null，清空圖表並顯示提示
+            Plotly.purge('chart');
+            document.getElementById('chart').innerHTML = `<div style="line-height:500px">該月份暫無有效觀測數據 (Null Data)</div>`;
+            return;
+        }
+        
+        // 2. 取得唯一的經緯度軸，並確保是數字排序
+        const lats = [...new Set(monthData.map(d => Number(d.lat)))].sort((a, b) => a - b);
+        const lons = [...new Set(monthData.map(d => Number(d.lon)))].sort((a, b) => a - b);
+
+        // 3. 建立 Z 軸矩陣：Plotly 熱力圖要求 y 為列(row)，x 為行(col)
+        const zData = lats.map(lat => {
+            return lons.map(lon => {
+                // 尋找該經緯度座標的點
+                const point = monthData.find(d => Number(d.lat) === lat && Number(d.lon) === lon);
+                return point ? point.v : null;
+            });
+        });
+
+        const trace = {
+            x: lons,
+            y: lats,
+            z: zData,
+            type: 'heatmap',
+            colorscale: 'RdBu',
+            reversescale: true,
+            zsmooth: 'best', 
+            zmid: 0,            
+            connectgaps: true   
+        };
+
+        const layout = {
+            title: { text: `<b>${month} 台灣海域海溫距平分布</b>`, font: { size: 20 } },
+            xaxis: { title: '經度 (East)', dtick: 1 },
+            yaxis: { title: '緯度 (North)', dtick: 1 },
+            margin: { t: 60, b: 50, l: 60, r: 40 }
+        };
+
+        Plotly.newPlot('chart', [trace], layout);
+    }
+
+    function changeMonth(step) {
+        currentIdx = (currentIdx + step + months.length) % months.length;
+        updateUI();
+    }
+
+    function jumpToMonth(i) {
+        currentIdx = i;
+        updateUI();
+    }
+
+    init();
+</script>
+
+</body>
+</html>
