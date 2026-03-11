@@ -26,12 +26,21 @@
         .dots { margin-top: 10px; }
         .dot { height: 10px; width: 10px; background-color: #bbb; border-radius: 50%; display: inline-block; margin: 0 5px; cursor: pointer; }
         .dot.active { background-color: var(--primary-color); }
+
+
+@media screen and (max-width: 600px) {
+    h1 { font-size: 20px; }
+    .controls { flex-wrap: wrap; } 
+    #chart {
+        height: 450px; 
+    }
+}
     </style>
 </head>
 <body>
 
 <div class="dashboard">
-    <h1>2023 聖嬰事件：台灣周邊海溫異常分佈</h1>
+    <h1> 聖嬰事件：台灣周邊海溫異常分佈</h1>
     
     <div class="carousel-container">
         <button class="arrow prev" onclick="changeMonth(-1)">&#10094;</button>
@@ -66,7 +75,7 @@ let allData = [];
             const response = await fetch('sst_taiwan_2023_full.json');
             allData = await response.json();
             
-            // 確保日期排序與提取
+            // 日期排序
             months = [...new Set(allData.map(d => d.t.substring(0, 7)))].filter(m => m).sort();
             console.log("成功解析月份:", months);
 
@@ -100,56 +109,54 @@ let allData = [];
 
         drawChart(targetMonth);
     }
-
+    
     function drawChart(month) {
-        // 1. 過濾該月份數據
-       const monthData = allData.filter(d => d.t.startsWith(month) && d.v !== null);
-        
-        if (monthData.length === 0) {
-            // 如果該月全是 null，清空圖表並顯示提示
-            Plotly.purge('chart');
-            document.getElementById('chart').innerHTML = `<div style="line-height:500px">該月份暫無有效觀測數據 (Null Data)</div>`;
-            return;
-        }
-        
-        // 2. 取得唯一的經緯度軸，並確保是數字排序
-        const lats = [...new Set(monthData.map(d => Number(d.lat)))].sort((a, b) => a - b);
-        const lons = [...new Set(monthData.map(d => Number(d.lon)))].sort((a, b) => a - b);
+    // 過濾數據
+    const monthData = allData.filter(d => d.t.startsWith(month) && d.v !== null);
+    
+  
+    
+    // 取得經緯度軸
+    const lats = [...new Set(monthData.map(d => Number(d.lat)))].sort((a, b) => a - b);
+    const lons = [...new Set(monthData.map(d => Number(d.lon)))].sort((a, b) => a - b);
 
-        // 3. 建立 Z 軸矩陣：Plotly 熱力圖要求 y 為列(row)，x 為行(col)
-        const zData = lats.map(lat => {
-            return lons.map(lon => {
-                // 尋找該經緯度座標的點
-                const point = monthData.find(d => Number(d.lat) === lat && Number(d.lon) === lon);
-                return point ? point.v : null;
-            });
-        });
+    // 計算 z 軸數據
+    const zData = lats.map(lat => {
+    return lons.map(lon => {
+        const points = monthData.filter(d => Number(d.lat) === lat && Number(d.lon) === lon);
+        
+        if (points.length === 0) return null;
 
-       const trace = {
-    x: lons,
-    y: lats,
-    z: zData,
-    type: 'heatmap',
-    colorscale: 'RdBu',
-    reversescale: true,  // 確保：正值 = 紅色, 負值 = 藍色
-    zmid: 0,             // 確保 0 絕對是白色
-    zmin: -1.5,   // 數值低於 -1.5 顯示深藍
-    zmax: 1.5,    // 數值高於 1.5 顯示深紅
-    zsmooth: 'best',
-    connectgaps: true
+        const sum = points.reduce((acc, curr) => acc + curr.v, 0);
+        return sum / points.length;
+    });
+});
+
+    const trace = {
+        x: lons,
+        y: lats,
+        z: zData,
+        type: 'heatmap',
+        colorscale: 'RdBu',
+        reversescale: false,
+        zmid: 0,             
+        zmin: -1.5,          
+        zmax: 1.5,
+        zsmooth: 'best',     
+        connectgaps: false   //陸地
+    };
+
+    const layout = {
+    title: { text: `<b>${month} 台灣海域海溫距平 (月平均)</b>`, font: { size: 20 } },
+    xaxis: { title: '經度 (East)', dtick: 2 },
+    yaxis: { title: '緯度 (North)', dtick: 2 },
+    margin: { t: 60, b: 50, l: 60, r: 40 },
+    
 };
-
-        const layout = {
-            title: { text: `<b>${month} 台灣海域海溫距平分布</b>`, font: { size: 20 } },
-            xaxis: { title: '經度 (East)', dtick: 1 },
-            yaxis: { title: '緯度 (North)', dtick: 1 },
-            margin: { t: 60, b: 50, l: 60, r: 40 }
-        };
-
-        Plotly.newPlot('chart', [trace], layout);
-    }
-
-    function changeMonth(step) {
+    Plotly.newPlot('chart', [trace], layout);
+}
+    
+       function changeMonth(step) {
         currentIdx = (currentIdx + step + months.length) % months.length;
         updateUI();
     }
@@ -160,6 +167,16 @@ let allData = [];
     }
 
     init();
+
+     document.addEventListener('keydown', event => {
+        if (event.key === 'ArrowRight' || event.key === ' ') {
+            changeMonth(1);
+             window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (event.key === 'ArrowLeft') {
+            changeMonth(-1);
+             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    });
 </script>
 
 </body>
