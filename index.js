@@ -3,7 +3,7 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 
-const year = 2023;
+const year = 2021;
 
 async function processData() {
     console.log(`正在從 NOAA 抓取 ${year} 年數據...（這可能需要一點時間）`);
