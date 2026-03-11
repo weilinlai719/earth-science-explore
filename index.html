@@ -5,42 +5,49 @@
     <title>聖嬰現象探索：台灣海域海溫分析</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
-        :root { --primary-color: #2c3e50; }
+        :root { --primary-color: #2c3e50; --accent-color: #3498db; }
         body { font-family: "Microsoft JhengHei", sans-serif; background: #ececec; display: flex; justify-content: center; padding: 20px; }
-        .dashboard { width: 900px; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+        .main-container { display: flex;flex-direction: row; align-items: flex-start;  gap: 40px; width: 1200px; max-width: 95vw;}
+        .dashboard { width: 800px; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
         
+        /* 分頁切換按鈕 */
+        .page-tabs { display: flex; justify-content: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .tab-btn { padding: 10px 25px; cursor: pointer; border: none; background: #f0f0f0; margin: 0 5px; border-radius: 5px; font-weight: bold; transition: 0.3s; }
+        .tab-btn.active { background: var(--accent-color); color: white; }
+
         /* 圖片容器與箭頭 */
         .carousel-container { position: relative; display: flex; align-items: center; justify-content: center; margin: 20px 0; background: #f9f9f9; border-radius: 10px; }
-        #chart { width: 100%; height: 500px; }
-        .arrow { cursor: pointer; position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.2); color: white; border: none; padding: 15px; border-radius: 50%; font-size: 20px; transition: 0.3s; }
+        #chart { width: 80%; height: 500px; }
+        .arrow { cursor: pointer; position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.2); color: white; border: none; padding: 15px; border-radius: 50%; font-size: 20px; transition: 0.3s; z-index: 10; }
         .arrow:hover { background: var(--primary-color); }
         .prev { left: 10px; }
         .next { right: 10px; }
-
-        /* 月份標籤與文字描述 */
-        .info-section { margin-top: 20px; text-align: left; padding: 20px; border-top: 2px solid #eee; }
-        .month-tag { display: inline-block; background: var(--primary-color); color: white; padding: 5px 15px; border-radius: 5px; font-weight: bold; margin-bottom: 10px; }
-        #feature-text { font-size: 1.1rem; line-height: 1.6; color: #555; height: 100px; }
         
         /* 下方分頁點 */
         .dots { margin-top: 10px; }
         .dot { height: 10px; width: 10px; background-color: #bbb; border-radius: 50%; display: inline-block; margin: 0 5px; cursor: pointer; }
         .dot.active { background-color: var(--primary-color); }
 
-
-@media screen and (max-width: 600px) {
-    h1 { font-size: 20px; }
-    .controls { flex-wrap: wrap; } 
-    #chart {
-        height: 450px; 
-    }
-}
+        .dashboarder { width: 300px; background: white; padding: 30px;padding-top:60px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+        /* 月份標籤與文字描述 */
+        .info-section { margin-top: 20px; text-align: left; padding: 20px; border-top: 2px solid #eee; }
+        .month-tag { display: inline-block; background: var(--primary-color); color: white; padding: 5px 15px; border-radius: 5px; font-weight: bold; margin-bottom: 10px; }
+        #feature-text { font-size: 1.1rem; line-height: 1.6; color: #555; height: 100px; }
+        @media screen and (max-width: 600px) {
+            h1 { font-size: 20px; }
+            #chart { height: 450px; }
+        }
     </style>
 </head>
 <body>
-
+<dive class="main-container">
 <div class="dashboard">
-    <h1> 聖嬰事件：台灣周邊海溫異常分佈</h1>
+    <div class="page-tabs">
+        <button class="tab-btn active" onclick="switchYear('2021', this)">2021年 (反聖嬰)</button>
+        <button class="tab-btn" onclick="switchYear('2023', this)">2023年 (聖嬰)</button>
+    </div>
+
+    <h1> 聖嬰/反聖嬰事件：台灣周邊海溫異常分佈</h1>
     
     <div class="carousel-container">
         <button class="arrow prev" onclick="changeMonth(-1)">&#10094;</button>
@@ -49,36 +56,52 @@
     </div>
 
     <div class="dots" id="dot-container"></div>
-
+</div>
+<div class="dashboarder">
     <div class="info-section">
-        <div class="month-tag" id="month-label">2023-01</div>
+        <div class="month-tag" id="month-label">載入中...</div>
         <h3>各月份特徵分析：</h3>
         <p id="feature-text">正在載入數據...</p>
     </div>
 </div>
-
+</dive>
 <script>
-let allData = [];
+    let allData = [];
     let currentIdx = 0;
     let months = [];
+    let currentYear = '2021'; // 預設年份
 
     const featureDescriptions = {
-        "2023-01": "年初仍受反聖嬰現象餘波影響，台灣周邊海溫距平值多為負值（藍色），顯示海溫偏低。",
-        "2023-07": "聖嬰現象於夏季正式確立。觀察到南部海域開始出現暖色調（正距平），熱量開始累積。",
-        "2023-11": "聖嬰現象達到強盛期。台灣周邊海域距平值顯著增加，呈現大面積紅橘色，異常升溫明顯。",
-        "2023-12": "年底海溫持續維持高位，顯示聖嬰現象對冬半年的持續性影響，與全球暖冬趨勢一致。"
+        // 2021 反聖嬰特徵描述
+        "2021-01": "反聖嬰現象活躍期，西太平洋海溫堆積，台灣周邊海溫通常呈現正距平。",
+        // 2023 聖嬰特徵描述
+        "2023-01": "年初仍受反聖嬰現象餘波影響，台灣周邊海溫距平值多為負值（藍色）。",
+        "2023-07": "聖嬰現象於夏季正式確立。南部海域開始出現暖色調（正距平）。",
+        "2023-11": "聖嬰現象達到強盛期。台灣周邊海面異常升溫明顯。",
+        "2023-12": "年底海溫持續維持高位，顯示聖嬰現象對冬半年的持續性影響。"
     };
+
+    // 切換年份的函式
+    async function switchYear(year, btn) {
+        currentYear = year;
+        currentIdx = 0; // 重置到第一個月
+        
+        // 切換按鈕樣式
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        await init();
+    }
 
     async function init() {
         try {
-            console.log("正在載入 JSON...");
-            const response = await fetch('sst_taiwan_2023_full.json');
+            const fileName = `sst_taiwan_${currentYear}_full.json`;
+            console.log(`正在載入 ${fileName}...`);
+            const response = await fetch(fileName);
             allData = await response.json();
             
-            // 日期排序
             months = [...new Set(allData.map(d => d.t.substring(0, 7)))].filter(m => m).sort();
-            console.log("成功解析月份:", months);
-
+            
             const dotContainer = document.getElementById('dot-container');
             dotContainer.innerHTML = '';
             months.forEach((m, i) => {
@@ -91,7 +114,7 @@ let allData = [];
             updateUI();
         } catch (err) {
             console.error("初始化失敗:", err);
-            document.getElementById('feature-text').innerText = "資料載入失敗，請確認 JSON 檔案路徑與伺服器狀態。";
+            document.getElementById('feature-text').innerText = "資料載入失敗，請確認 JSON 檔案是否存在。";
         }
     }
 
@@ -101,7 +124,7 @@ let allData = [];
         
         document.getElementById('month-label').innerText = targetMonth;
         document.getElementById('feature-text').innerText = 
-            featureDescriptions[targetMonth] || "此月份海溫隨聖嬰現象發展呈現動態變動，觀察重點在於距平值的正負轉換。";
+            featureDescriptions[targetMonth] || "此月份海溫隨氣候現象發展呈現動態變動，觀察重點在於距平值的正負轉換。";
 
         document.querySelectorAll('.dot').forEach((d, i) => {
             d.className = i === currentIdx ? 'dot active' : 'dot';
@@ -111,52 +134,38 @@ let allData = [];
     }
     
     function drawChart(month) {
-    // 過濾數據
-    const monthData = allData.filter(d => d.t.startsWith(month) && d.v !== null);
-    
-  
-    
-    // 取得經緯度軸
-    const lats = [...new Set(monthData.map(d => Number(d.lat)))].sort((a, b) => a - b);
-    const lons = [...new Set(monthData.map(d => Number(d.lon)))].sort((a, b) => a - b);
+        const monthData = allData.filter(d => d.t.startsWith(month) && d.v !== null);
+        const lats = [...new Set(monthData.map(d => Number(d.lat)))].sort((a, b) => a - b);
+        const lons = [...new Set(monthData.map(d => Number(d.lon)))].sort((a, b) => a - b);
 
-    // 計算 z 軸數據
-    const zData = lats.map(lat => {
-    return lons.map(lon => {
-        const points = monthData.filter(d => Number(d.lat) === lat && Number(d.lon) === lon);
-        
-        if (points.length === 0) return null;
+        const zData = lats.map(lat => {
+            return lons.map(lon => {
+                const points = monthData.filter(d => Number(d.lat) === lat && Number(d.lon) === lon);
+                if (points.length === 0) return null;
+                const sum = points.reduce((acc, curr) => acc + curr.v, 0);
+                return sum / points.length;
+            });
+        });
 
-        const sum = points.reduce((acc, curr) => acc + curr.v, 0);
-        return sum / points.length;
-    });
-});
+        const trace = {
+            x: lons, y: lats, z: zData,
+            type: 'heatmap',
+            colorscale: 'RdBu',
+            reversescale: false,
+            zmid: 0, zmin: -1.5, zmax: 1.5,
+            zsmooth: 'best', connectgaps: false
+        };
 
-    const trace = {
-        x: lons,
-        y: lats,
-        z: zData,
-        type: 'heatmap',
-        colorscale: 'RdBu',
-        reversescale: false,
-        zmid: 0,             
-        zmin: -1.5,          
-        zmax: 1.5,
-        zsmooth: 'best',     
-        connectgaps: false   //陸地
-    };
-
-    const layout = {
-    title: { text: `<b>${month} 台灣海域海溫距平 (月平均)</b>`, font: { size: 20 } },
-    xaxis: { title: '經度 (East)', dtick: 2 },
-    yaxis: { title: '緯度 (North)', dtick: 2 },
-    margin: { t: 60, b: 50, l: 60, r: 40 },
+        const layout = {
+            title: { text: `<b>${month} 台灣海域海溫距平 (月平均)</b>`, font: { size: 20 } },
+            xaxis: { title: '經度 (E)', dtick: 2, scaleanchor: 'y', scaleratio: 1 },
+            yaxis: { title: '緯度 (N)', dtick: 2 },
+            margin: { t: 60, b: 50, l: 60, r: 40 },
+        };
+        Plotly.newPlot('chart', [trace], layout);
+    }
     
-};
-    Plotly.newPlot('chart', [trace], layout);
-}
-    
-       function changeMonth(step) {
+    function changeMonth(step) {
         currentIdx = (currentIdx + step + months.length) % months.length;
         updateUI();
     }
@@ -168,13 +177,11 @@ let allData = [];
 
     init();
 
-     document.addEventListener('keydown', event => {
+    document.addEventListener('keydown', event => {
         if (event.key === 'ArrowRight' || event.key === ' ') {
             changeMonth(1);
-             window.scrollTo({ top: 0, behavior: 'smooth' });
         } else if (event.key === 'ArrowLeft') {
             changeMonth(-1);
-             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     });
 </script>
