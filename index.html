@@ -28,11 +28,14 @@
         .dot { height: 10px; width: 10px; background-color: #bbb; border-radius: 50%; display: inline-block; margin: 0 5px; cursor: pointer; }
         .dot.active { background-color: var(--primary-color); }
 
-        .dashboarder { width: 300px; background: white; padding: 30px;padding-top:60px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+        .dashboarder { width: 300px; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+        .page-tabser { display: flex; justify-content: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .taber-btn { padding: 10px 25px; cursor: pointer; border: none; background: #f0f0f0; margin: 0 5px; border-radius: 5px; font-weight: bold; transition: 0.3s; }
+        .taber-btn.active { background: var(--accent-color); color: white; }
         /* 月份標籤與文字描述 */
-        .info-section { margin-top: 20px; text-align: left; padding: 20px; border-top: 2px solid #eee; }
+        .info-section { margin-top: 20px; text-align: left; padding: 10px;  }
         .month-tag { display: inline-block; background: var(--primary-color); color: white; padding: 5px 15px; border-radius: 5px; font-weight: bold; margin-bottom: 10px; }
-        #feature-text { font-size: 1.1rem; line-height: 1.6; color: #555; height: 100px; }
+        #feature-text { font-size: 1.1rem; line-height: 1.6; color: #555; height:auto; }
         @media screen and (max-width: 600px) {
             h1 { font-size: 20px; }
             #chart { height: 450px; }
@@ -40,7 +43,7 @@
     </style>
 </head>
 <body>
-<dive class="main-container">
+<div class="main-container">
 <div class="dashboard">
     <div class="page-tabs">
         <button class="tab-btn active" onclick="switchYear('2021', this)">2021年 (反聖嬰)</button>
@@ -58,13 +61,16 @@
     <div class="dots" id="dot-container"></div>
 </div>
 <div class="dashboarder">
+     <div class="page-tabser">
+        <button class="taber-btn active" onclick="changecommemtry('feature',this)">特徵分析</button>
+        <button class="taber-btn" onclick="changecommemtry('AI',this)">AI解說</button>
+    </div>
     <div class="info-section">
         <div class="month-tag" id="month-label">載入中...</div>
-        <h3>各月份特徵分析：</h3>
         <p id="feature-text">正在載入數據...</p>
     </div>
 </div>
-</dive>
+</div>
 <script>
     let allData = [];
     let currentIdx = 0;
@@ -85,8 +91,6 @@
         "2021-10": "雖然大氣轉涼，但海洋對溫度的反應較慢，維持暖色調。",
         "2021-11": "台灣海域依然偏暖，與典型冷冬的大氣感官形成對比。",
         "2021-12": "年底維持溫和正距平，顯示該年海洋熱量輸出極為穩定。",
-    
-
         // 2023 聖嬰特徵描述
         "2023-01": "延續前兩年反聖嬰餘波，台灣附近仍有微弱正距平，但範圍開始縮小。",
         "2023-02": "海溫距平開始轉趨中性，紅色區塊逐漸被白色（正常）取代。",
@@ -101,7 +105,35 @@
         "2023-11": "聖嬰達到巔峰，台灣周邊海域呈現強烈紅橘色，異常升溫極為明顯。",
         "2023-12": "年底受聖嬰現象與全球暖化雙重影響，出現明顯「暖冬」海洋訊號。"
     };
+   const AIfeature = {
+    // 2021 反聖嬰 AI 深度解說
+    "2021-01": "AI 分析：2021年初處於典型反聖嬰事件。西太平洋信風增強，將暖水推向台灣所在的西太平洋，導致海溫較常年平均偏高。雖然正值冬季，但暖化的海洋可能減緩冷氣團南下的冷卻速率。",
+    "2021-02": "AI 分析：觀察到台灣東側黑潮路徑有明顯熱量累積。反聖嬰現象使得西太平洋暖池（Warm Pool）偏西，台灣周邊海域熱含量高，這會導致該年春季大氣濕度較高。",
+    "2021-03": "AI 分析：春季海溫距平持續擴大。西太平洋的異常暖水有利於低壓系統萌芽。此時台灣海峽的溫度升高，顯示底層湧升流訊號較弱，整體海洋環境穩定偏暖。",
+    "2021-04": "AI 分析：反聖嬰達到穩定期。此時台灣周邊海溫的正距平（紅色）是全球少數明顯暖區，這種海洋熱力狀態通常預示著隨後梅雨季的水氣補給會相當充沛。",
+    "2021-05": "AI 分析：進入梅雨季，暖海面提供了大量潛熱，有助於滯留鋒面氣旋發展。數據顯示台灣全海域幾乎無冷區，顯示熱力結構極為穩固。",
+    "2021-06": "AI 分析：夏季開始，反聖嬰現象雖有減弱跡象，但海洋具備熱慣性。台灣周邊海溫較往年高出 1.0°C 以上，這會增加夏季午後雷陣雨的強度與頻率。",
+    "2021-07": "AI 分析：太平洋高壓盤據，搭配反聖嬰背景，台灣周邊形成高溫水體。這對於當時經過台灣附近的熱帶氣旋（颱風）提供了極佳的發展能量來源。",
+    "2021-08": "AI 分析：8月數據顯示海溫異常達標，這與反聖嬰引起的西太平洋環流增強有關。台灣周邊海域的蓄熱量處於高位，海溫距平圖呈現深紅色連貫分佈。",
+    "2021-09": "AI 分析：進入秋季，由於海水比熱容大，夏季累積的熱量仍未消散。反聖嬰現象使得台灣周邊維持偏暖狀態，可能導致該年入秋時間較晚。",
+    "2021-10": "AI 分析：大氣環流開始轉向，但海溫距平顯示海洋依然「拒絕變冷」。這種大氣冷、海洋暖的配置，常導致海面產生大量蒸發，增加秋季降雨風險。",
+    "2021-11": "AI 分析：11月通常應開始變冷，但受反聖嬰堆積暖水影響，台灣海溫距平仍維持正值。這在氣候學上是一種強烈的海洋增溫訊號。",
+    "2021-12": "AI 分析：2021年結束之際，西太平洋維持高熱狀態。反聖嬰年份的冬季海洋通常不會提供太多冷平流支持，顯示該年是一次完整的暖海洋事件。",
 
+    // 2023 聖嬰 AI 深度解說
+    "2023-01": "AI 分析：2023年初處於氣候轉折點。雖然地圖上仍有微弱殘餘暖訊號，但聖嬰現象正準備發動，西太平洋暖池開始向東移動，台灣附近的熱能開始減少。",
+    "2023-02": "AI 分析：2月海溫圖呈現大片白色，代表海溫回歸氣候平均值。這是聖嬰現象轉換前的「中性期」，台灣周邊海洋環流趨於穩定。",
+    "2023-03": "AI 分析：出現明顯藍色區塊。聖嬰現象導致西太平洋信風減弱，暖水向東太平洋偏移，西太平洋（台灣附近）出現冷距平。這是典型聖嬰年早期的特徵。",
+    "2023-04": "AI 分析：海溫波動明顯。由於暖水中心移走，台灣周邊垂直湧升流可能增強，帶來深層較冷的海水，導致表面海溫呈現零星的冷訊號。",
+    "2023-05": "AI 分析：聖嬰現象確立，全球海溫在此時開始異常。雖然台灣周邊海溫不高，但全球暖化背景開始與聖嬰疊加，海溫圖顯示出極不穩定的正負轉換。",
+    "2023-06": "AI 分析：進入夏季，台灣海域開始隨全球熱浪升溫。聖嬰年通常會導致台灣夏季降雨分佈改變，此時海溫距平轉正，反映了全球海洋普遍變暖的趨勢。",
+    "2023-07": "AI 分析：7月數據顯示南部海域異常紅。聖嬰年期間，熱帶西太平洋的海氣互動複雜，台灣周邊受副熱帶高壓影響增強，導致表面受日照加熱劇烈。",
+    "2023-08": "AI 分析：聖嬰現象發展至中等強度。雖然暖水中心在遠方，但台灣周邊因局部風場微弱，垂直混合效果差，導致表層海水溫度距平持續攀升。",
+    "2023-09": "AI 分析：9月黑潮區域呈現深紅色。聖嬰年常伴隨全球性的海溫破紀錄現象，台灣周邊熱量累積顯著，可能影響該月份的颱風強度與路徑。",
+    "2023-10": "AI 分析：強聖嬰期。台灣海域海溫不降反升，這反映了聖嬰對大氣環流的遙傳影響（Teleconnection），減弱了東北季風初期的冷卻能力。",
+    "2023-11": "AI 分析：11月地圖呈現強烈紅色，距平值逼近 1.5°C。這反映了 2023 年強聖嬰事件的高峰。即使到了11月，台灣海洋仍處於異常高熱狀態，是典型的暖冬前兆。",
+    "2023-12": "AI 分析：年底數據顯示全球海洋熱能釋放。聖嬰現象配合全球暖化，使 2023 年 12 月台灣海域海溫極度異常偏高，這對冬季漁業資源分佈將產生巨大影響。"
+};
     // 切換年份的函式
     async function switchYear(year, btn) {
         currentYear = year;
@@ -150,7 +182,9 @@
         document.querySelectorAll('.dot').forEach((d, i) => {
             d.className = i === currentIdx ? 'dot active' : 'dot';
         });
-
+        const activeTab = document.querySelector('.taber-btn.active');
+        const mode = activeTab.innerText === "AI解說" ? 'AI' : 'feature';
+        changecommemtry(mode, activeTab);
         drawChart(targetMonth);
     }
     
@@ -179,13 +213,23 @@
 
         const layout = {
             title: { text: `<b>${month} 台灣海域海溫距平 (月平均)</b>`, font: { size: 20 } },
-            xaxis: { title: '經度 (E)', dtick: 2, scaleanchor: 'y', scaleratio: 1 },
-            yaxis: { title: '緯度 (N)', dtick: 2 },
+            xaxis: { title: '經度 (E)', autotick: true,ticks: 'outside',tickformat: '.1f',  scaleanchor: 'y', scaleratio: 1 },
+            yaxis: { title: '緯度 (N)', autotick: true,ticks: 'outside',tickformat: '.1f',  scaleratio: 1 },
             margin: { t: 60, b: 50, l: 60, r: 40 },
         };
         Plotly.newPlot('chart', [trace], layout);
     }
-    
+   async function changecommemtry(type, btn) {
+        document.querySelectorAll('.taber-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+         const targetMonth = months[currentIdx];
+        if (type == 'feature') {
+            document.getElementById('feature-text').innerText = featureDescriptions[targetMonth] || "此月份海溫隨氣候現象發展呈現動態變動，觀察重點在於距平值的正負轉換。";
+        } else if (type == 'AI') {
+            document.getElementById('feature-text').innerText =AIfeature[targetMonth] || "根據目前的海溫距平分佈，台灣周邊海域在此月份呈現出明顯的暖化趨勢，這可能與當前的氣候模式和全球暖化趨勢有關。建議持續關注未來幾個月的變化，以評估對台灣氣候的潛在影響。";
+        }
+
+    }
     function changeMonth(step) {
         currentIdx = (currentIdx + step + months.length) % months.length;
         updateUI();
@@ -197,7 +241,7 @@
     }
 
     init();
-
+    changecommemtry('feature', document.querySelector('.taber-btn'));
     document.addEventListener('keydown', event => {
         if (event.key === 'ArrowRight' || event.key === ' ') {
             changeMonth(1);
