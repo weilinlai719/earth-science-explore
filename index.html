@@ -6,8 +6,9 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
         :root { --primary-color: #2c3e50; --accent-color: #3498db; }
-        body { font-family: "Microsoft JhengHei", sans-serif; background: #ffffff; display: flex; justify-content: center; padding: 20px; }
-        .main-container { display: flex;flex-direction: row; align-items: flex-start;  gap: 40px; width: 1250px; max-width: 95vw;}
+        body { font-family: "Microsoft JhengHei", sans-serif; background: #ffffff;  justify-content: center; padding: 20px; }
+        .page-wrapper {display: flex;flex-direction: column;align-items: center;min-height: 100vh; width: 100%;}
+        .main-container { display: flex;flex-direction: row; align-items: flex-start;  gap: 40px; width: 1250px; max-width: 95vw;margin: 0 auto 50px auto;}
         .dashboard { width: 900px; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
         
         /* 分頁切換按鈕 */
@@ -17,7 +18,7 @@
 
         /* 圖片容器與箭頭 */
         .carousel-container { position: relative; display: flex; align-items: center; justify-content: center; margin: 20px 0; background: #f9f9f9; border-radius: 10px; }
-        #chart { width: 640px; height: 500px; }
+        #chart { width:80%; height: 500px; }
         .arrow { cursor: pointer; position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.2); color: white; border: none; padding: 15px; border-radius: 50%; width: 55px;height: 55px; transition: 0.3s; z-index: 10; }
         .arrow:hover { background: var(--primary-color); }
         .prev { left: 10px; }
@@ -29,20 +30,31 @@
         .dot.active { background-color: var(--primary-color); }
 
         .dashboarder { width: 300px; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
-        .page-tabser { display: flex; justify-content: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .type-tab { display: flex; justify-content: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .taber-btn { padding: 10px 25px; cursor: pointer; border: none; background: #f0f0f0; margin: 0 5px; border-radius: 5px; font-weight: bold; transition: 0.3s; }
         .taber-btn.active { background: var(--accent-color); color: white; }
         /* 月份標籤與文字描述 */
         .info-section { margin-top: 20px; text-align: left; padding: 10px;  }
         .month-tag { display: inline-block; background: var(--primary-color); color: white; padding: 5px 15px; border-radius: 5px; font-weight: bold; margin-bottom: 10px; }
         #feature-text { font-size: 1.1rem; line-height: 1.6; color: #555; height:auto; }
+        .footer { text-align: center; margin-top: 40px; color: #756f6f; width: 100%;height: auto;margin-bottom: 0px; }
+        .footertext { margin-top: 10px; color: #888; font-size: 0.9rem; }
         @media screen and (max-width: 600px) {
             h1 { font-size: 20px; }
             #chart { height: 450px; }
+            .main-container {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+    .dashboard, .dashboarder {
+        width: 95%;
+    }
         }
     </style>
 </head>
 <body>
+    <div class="page-wrapper">
 <div class="main-container">
 <div class="dashboard">
     <div class="page-tabs">
@@ -61,7 +73,7 @@
     <div class="dots" id="dot-container"></div>
 </div>
 <div class="dashboarder">
-     <div class="page-tabser">
+     <div class="type-tab">
         <button class="taber-btn active" onclick="changecommemtry('feature',this)">特徵分析</button>
         <button class="taber-btn" onclick="changecommemtry('AI',this)">AI解說</button>
     </div>
@@ -69,8 +81,14 @@
         <div class="month-tag" id="month-label">載入中...</div>
         <p id="feature-text">正在載入數據...</p>
     </div>
+    </div>
+    </div>
 </div>
+<div class="footer">
+    <p class="footertext">資料來源：NOAA OISST V2.1 台灣周邊海域海溫距平資料</p>
+    <p class="footertext">製作：Weilin Lai &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2026年3月</p>
 </div>
+</body>
 <script>
     let allData = [];
     let currentIdx = 0;
