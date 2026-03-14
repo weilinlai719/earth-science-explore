@@ -174,8 +174,13 @@
             console.log(`正在載入 ${fileName}...`);
             const response = await fetch(fileName);
             allData = await response.json();
-            
-            months = [...new Set(allData.map(d => d.t.substring(0, 7)))].filter(m => m).sort();
+            monthlyGroupedData = {}; 
+            allData.forEach(d => {
+            const monthKey = d.t.substring(0, 7);
+            if (!monthlyGroupedData[monthKey]) monthlyGroupedData[monthKey] = [];
+            monthlyGroupedData[monthKey].push(d);
+            });
+            months = Object.keys(monthlyGroupedData).sort();
             
             const dotContainer = document.getElementById('dot-container');
             dotContainer.innerHTML = '';
@@ -211,19 +216,34 @@
     }
     
     function drawChart(month) {
-        const monthData = allData.filter(d => d.t.startsWith(month) && d.v !== null);
-        const lats = [...new Set(monthData.map(d => Number(d.lat)))].sort((a, b) => a - b);
-        const lons = [...new Set(monthData.map(d => Number(d.lon)))].sort((a, b) => a - b);
+   const monthData = monthlyGroupedData[month] || [];
+    if (monthData.length === 0) return;
 
-        const zData = lats.map(lat => {
-            return lons.map(lon => {
-                const points = monthData.filter(d => Number(d.lat) === lat && Number(d.lon) === lon);
-                if (points.length === 0) return null;
-                const sum = points.reduce((acc, curr) => acc + curr.v, 0);
-                return sum / points.length;
-            });
+    const lats = [...new Set(monthData.map(d => Number(d.lat)))].sort((a, b) => a - b);
+    const lons = [...new Set(monthData.map(d => Number(d.lon)))].sort((a, b) => a - b);
+
+    const dataMap = {};
+    monthData.forEach(d => {
+        const key = `${d.lat}_${d.lon}`;
+       if (typeof d.v === 'number' && d.v !== null && !isNaN(d.v)) {
+            const key = `${Number(d.lat).toFixed(3)}_${Number(d.lon).toFixed(3)}`;
+            if (!dataMap[key]) dataMap[key] = { sum: 0, count: 0 };
+            dataMap[key].sum += d.v;
+            dataMap[key].count += 1;
+        }
+    });
+  const zData = lats.map(lat => {
+        const latStr = lat.toFixed(3);
+        return lons.map(lon => {
+           const key = `${latStr}_${lon.toFixed(3)}`;
+            const record = dataMap[key];
+            if (record && record.count > 0 && record.sum !== null) {
+                return record.sum / record.count;
+            } else {
+                return null; 
+            }
         });
-
+    });
         const trace = {
             x: lons, y: lats, z: zData,
             type: 'heatmap',
