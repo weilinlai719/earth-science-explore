@@ -200,20 +200,22 @@
     }
 
    async function updateUI() {
-        if (months.length === 0) return;
-        const targetMonth = months[currentIdx];
-        
-        document.getElementById('month-label').innerText = targetMonth;
-        document.getElementById('feature-text').innerText = 
-            featureDescriptions[targetMonth] || "此月份海溫隨氣候現象發展呈現動態變動，觀察重點在於距平值的正負轉換。";
+    if (months.length === 0) return;
+    const targetMonth = months[currentIdx]; // 例如 "2021-01"
+    
+    document.getElementById('month-label').innerText = targetMonth;
 
-        document.querySelectorAll('.dot').forEach((d, i) => {
-            d.className = i === currentIdx ? 'dot active' : 'dot';
-        });
+    try {
+        const response = await fetch(`data/${targetMonth}.json`);
+        const monthData = await response.json(); 
         const activeTab = document.querySelector('.taber-btn.active');
-        const mode = activeTab.innerText === "AI解說" ? 'AI' : 'feature';
+        const mode = activeTab && activeTab.innerText === "AI解說" ? 'AI' : 'feature';
         changecommemtry(mode, activeTab);
-        drawChart(targetMonth);
+        await drawChart(targetMonth, monthData); 
+
+    } catch (err) {
+        console.error("抓取月份資料失敗:", err);
+    }
     }
     
    async function drawChart(month) {
