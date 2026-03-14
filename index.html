@@ -93,11 +93,12 @@
 </div>
 </body>
 <script>
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
     let allData = [];
     let currentIdx = 0;
     let months = [];
     let currentYear = '2021'; // 預設年份
-
+    let isProcessing = false;
     const featureDescriptions = {
         // 2021 反聖嬰特徵描述
         //待更改
@@ -198,7 +199,7 @@
         }
     }
 
-    function updateUI() {
+   async function updateUI() {
         if (months.length === 0) return;
         const targetMonth = months[currentIdx];
         
@@ -215,7 +216,7 @@
         drawChart(targetMonth);
     }
     
-    function drawChart(month) {
+   async function drawChart(month) {
    const monthData = monthlyGroupedData[month] || [];
     if (monthData.length === 0) return;
 
@@ -286,9 +287,11 @@
         }
 
     }
-    function changeMonth(step) {
+    async function changeMonth(step) {
         currentIdx = (currentIdx + step + months.length) % months.length;
         updateUI();
+        await sleep(50);
+        isProcessing = false;
     }
 
     function jumpToMonth(i) {
@@ -299,10 +302,15 @@
     init();
     changecommemtry('feature', document.querySelector('.taber-btn'));
     document.addEventListener('keydown', event => {
+        if (isProcessing) return;
         if (event.key === 'ArrowRight' || event.key === ' ') {
+            isProcessing = true;
             changeMonth(1);
+            
         } else if (event.key === 'ArrowLeft') {
+            isProcessing = true;
             changeMonth(-1);
+           
         }
     });
 </script>
