@@ -157,7 +157,9 @@
     "2023-11": "AI 分析：11月地圖呈現強烈紅色，距平值逼近 1.5°C。這反映了 2023 年強聖嬰事件的高峰。即使到了11月，台灣海洋仍處於異常高熱狀態，是典型的暖冬前兆。",
     "2023-12": "AI 分析：年底數據顯示全球海洋熱能釋放。聖嬰現象配合全球暖化，使 2023 年 12 月台灣海域海溫極度異常偏高，這對冬季漁業資源分佈將產生巨大影響。"
 };
-    async function switchYear(year, btn) {
+  let currentYearMonths = []; 
+
+ async function switchYear(year, btn) {
         currentYear = year;
         currentIdx = 0; 
         
@@ -167,28 +169,53 @@
         await init();
     }
 
-    async function init() {
-        try {
-           months = [
-        "2021-01", "2021-02", "2021-03", "2021-04", "2021-05", "2021-06",
-        "2021-07", "2021-08", "2021-09", "2021-10", "2021-11", "2021-12",
-        "2023-01", "2023-02" ,"2023-03", "2023-04", "2023-05", "2023-06",
-        "2023-07", "2023-08", "2023-09", "2023-10", "2023-11", "2023-12"
-    ];
-
+function renderDots() {
     const dotContainer = document.getElementById('dot-container');
     dotContainer.innerHTML = '';
-    months.forEach((m, i) => {
+    currentYearMonths.forEach((m, i) => {
         const dot = document.createElement('span');
-        dot.className = `dot ${i === 0 ? 'active' : ''}`;
+        dot.className = `dot ${i === currentIdx ? 'active' : ''}`;
         dot.onclick = () => jumpToMonth(i);
         dotContainer.appendChild(dot);
     });
-
-    await updateUI();
+}
+    let monthCache = {};
+    async function init() {
+        try {
+        if (currentYear === '2021') {
+            months = ["2021-01", "2021-02", "2021-03", "2021-04", "2021-05", "2021-06",
+                      "2021-07", "2021-08", "2021-09", "2021-10", "2021-11", "2021-12"];
+        } else if (currentYear === '2023') {
+            months = ["2023-01", "2023-02", "2023-03", "2023-04", "2023-05", "2023-06",
+                      "2023-07", "2023-08", "2023-09", "2023-10", "2023-11", "2023-12"];
+        }
+   const dotContainer = document.getElementById('dot-container');
+        dotContainer.innerHTML = '';
+        months.forEach((m, i) => {
+            const dot = document.createElement('span');
+            dot.className = `dot ${i === currentIdx ? 'active' : ''}`;
+            dot.onclick = () => jumpToMonth(i);
+            dotContainer.appendChild(dot);
+        });
+        await updateUI();
+        preloadData();
         } catch (err) {
             console.error("初始化失敗:", err);
             document.getElementById('feature-text').innerText = "資料載入失敗，請確認 JSON 檔案是否存在。";
+        }
+    }
+
+    async function preloadData() {
+    console.log(`開始預載 ${currentYear} 年份數據...`);
+    for (const m of months) {
+        if (!monthCache[m]) {
+            fetch(`data/${m}.json`)
+                .then(res => res.json())
+                .then(data => {
+                    monthCache[m] = data;
+                    console.log(`${m} 預載完成`);
+                });
+            }
         }
     }
 
