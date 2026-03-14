@@ -171,28 +171,24 @@
 
     async function init() {
         try {
-            const fileName = `sst_taiwan_${currentYear}_full.json`;
-            console.log(`正在載入 ${fileName}...`);
-            const response = await fetch(fileName);
-            allData = await response.json();
-            monthlyGroupedData = {}; 
-            allData.forEach(d => {
-            const monthKey = d.t.substring(0, 7);
-            if (!monthlyGroupedData[monthKey]) monthlyGroupedData[monthKey] = [];
-            monthlyGroupedData[monthKey].push(d);
-            });
-            months = Object.keys(monthlyGroupedData).sort();
-            
-            const dotContainer = document.getElementById('dot-container');
-            dotContainer.innerHTML = '';
-            months.forEach((m, i) => {
-                const dot = document.createElement('span');
-                dot.className = `dot ${i === 0 ? 'active' : ''}`;
-                dot.onclick = () => jumpToMonth(i);
-                dotContainer.appendChild(dot);
-            });
+           months = [
+        "2021-01", "2021-02", "2021-03", "2021-04", "2021-05", "2021-06",
+        "2021-07", "2021-08", "2021-09", "2021-10", "2021-11", "2021-12",
+        "2023-01", "2023-02" ,"2023-03", "2023-04", "2023-05", "2023-06",
+        "2023-07", "2023-08", "2023-09", "2023-10", "2023-11", "2023-12"
+    ];
 
-            updateUI();
+    // 初始化點點 UI
+    const dotContainer = document.getElementById('dot-container');
+    dotContainer.innerHTML = '';
+    months.forEach((m, i) => {
+        const dot = document.createElement('span');
+        dot.className = `dot ${i === 0 ? 'active' : ''}`;
+        dot.onclick = () => jumpToMonth(i);
+        dotContainer.appendChild(dot);
+    });
+
+    await updateUI();
         } catch (err) {
             console.error("初始化失敗:", err);
             document.getElementById('feature-text').innerText = "資料載入失敗，請確認 JSON 檔案是否存在。";
@@ -201,34 +197,47 @@
 
    async function updateUI() {
     if (months.length === 0) return;
-    const targetMonth = months[currentIdx]; // 例如 "2021-01"
+    const targetMonth = months[currentIdx]; 
     
     document.getElementById('month-label').innerText = targetMonth;
 
     try {
+        // 1. 抓取對應的小 JSON 檔案
         const response = await fetch(`data/${targetMonth}.json`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
         const monthData = await response.json(); 
+
+        // 2. 更新按鈕狀態
         const activeTab = document.querySelector('.taber-btn.active');
         const mode = activeTab && activeTab.innerText === "AI解說" ? 'AI' : 'feature';
         changecommemtry(mode, activeTab);
+
+        // 3. 呼叫繪圖，務必傳入 monthData
         await drawChart(targetMonth, monthData); 
 
     } catch (err) {
         console.error("抓取月份資料失敗:", err);
+        document.getElementById('feature-text').innerText = "找不到該月份資料，請確認 data 資料夾內有 " + targetMonth + ".json";
     }
-    }
-    
-   async function drawChart(month) {
-   const monthData = monthlyGroupedData[month] || [];
-    if (monthData.length === 0) return;
+}
 
+// 修正重點：這裡必須接收 (month, monthData) 兩個參數
+async function drawChart(month, monthData) {
+    // 檢查資料是否存在
+    if (!monthData || monthData.length === 0) {
+        console.error("沒有資料可以畫圖:", month);
+        return;
+    }
+
+    // 直接從傳入的 monthData 提取經緯度
     const lats = [...new Set(monthData.map(d => Number(d.lat)))].sort((a, b) => a - b);
     const lons = [...new Set(monthData.map(d => Number(d.lon)))].sort((a, b) => a - b);
 
     const dataMap = {};
     monthData.forEach(d => {
-        const key = `${d.lat}_${d.lon}`;
-       if (typeof d.v === 'number' && d.v !== null && !isNaN(d.v)) {
+        // 排除無效值與陸地 (null)
+        if (d.v !== null && typeof d.v === 'number' && !isNaN(d.v)) {
             const key = `${Number(d.lat).toFixed(3)}_${Number(d.lon).toFixed(3)}`;
             if (!dataMap[key]) dataMap[key] = { sum: 0, count: 0 };
             dataMap[key].sum += d.v;
