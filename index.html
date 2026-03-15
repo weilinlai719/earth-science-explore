@@ -227,6 +227,15 @@ function renderDots() {
     
     document.getElementById('month-label').innerText = targetMonth;
 
+    const dots = document.querySelectorAll('.dot');
+    dots.forEach((dot, i) => {
+        if (i === currentIdx) {
+            dot.classList.add('active');
+        } else {
+            dot.classList.remove('active');
+        }
+    });
+
     try {
         const response = await fetch(`data/${targetMonth}.json`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
