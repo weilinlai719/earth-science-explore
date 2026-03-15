@@ -6,9 +6,10 @@
     <title>聖嬰現象探索：台灣海域海溫分析</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
+        * { box-sizing: border-box;margin: 0;padding: 0; }
         :root { --primary-color: #2c3e50; --accent-color: #3498db; }
-        body { font-family: "Microsoft JhengHei", sans-serif; background: #ffffff;  justify-content: center; padding: 20px; }
-        .main-container { display: flex;flex-direction: row; align-items: flex-start;  gap: 40px; width: 1250px; max-width: 95vw;margin: 0 auto 50px auto;min-height: 90vh}
+        body { display: flex; flex-direction: column;font-family: "Microsoft JhengHei", sans-serif; background: #f4f7f9;width: 100%;overflow-x: hidden; min-height: 100vh;}
+        .main-container { flex: 1;display: flex;flex-direction: row; align-items: flex-start;  gap: 40px; width: 1250px; max-width: 95vw;margin: 0 auto 50px auto;min-height: 90vh;padding-top: 30px;}
         .dashboard { width: 900px; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
         
         /* 分頁切換按鈕 */
@@ -29,16 +30,21 @@
         .dot { height: 10px; width: 10px; background-color: #bbb; border-radius: 50%; display: inline-block; margin: 0 5px; cursor: pointer; }
         .dot.active { background-color: var(--primary-color); }
 
-        .dashboarder { width: 300px; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+        .dashboarder { flex: 0 0 330px;min-width: 300px; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
         .type-tab { display: flex; justify-content: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .taber-btn { padding: 10px 25px; cursor: pointer; border: none; background: #f0f0f0; margin: 0 5px; border-radius: 5px; font-weight: bold; transition: 0.3s; }
         .taber-btn.active { background: var(--accent-color); color: white; }
         /* 月份標籤與文字描述 */
         .info-section { margin-top: 20px; text-align: left; padding: 10px;  }
         .month-tag { display: inline-block; background: var(--primary-color); color: white; padding: 5px 15px; border-radius: 5px; font-weight: bold; margin-bottom: 10px; }
-        #feature-text { font-size: 1.1rem; line-height: 1.6; color: #555; height:auto; }
-        .footer { text-align: center; margin-top: 40px; color: #756f6f; width: 100%;height: auto;margin-bottom: 0px; }
-        .footertext { margin-top: 10px; color: #888; font-size: 0.9rem; }
+        #feature-text { font-size: 1.1rem; line-height: 1.6; color: #687374; height:auto; width: 100%;padding-top:10px;  }
+        .footer { text-align: center; background-color: #1a2a3a; width: 100%;height: auto;margin-bottom: 0px;padding: 20px 0;  margin-top: auto;  }
+        .footertext { margin-top: 10px; color: #9fafb0; font-size: 0.9rem; }
+        /*設計*/
+        .dashboard, .dashboarder { background: #ffffff;
+        border: 1px solid rgba(0,0,0,0.05);
+        box-shadow: 0 15px 35px rgba(26, 42, 58, 0.08); }
+
         @media screen and (max-width: 1200px) {
             h1 { font-size: 20px; }
             #chart { height: 450px; }
