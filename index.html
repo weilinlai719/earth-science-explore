@@ -289,11 +289,12 @@ async function drawChart(month, monthData) {
         return lons.map(lon => {
            const key = `${latStr}_${lon.toFixed(3)}`;
             const record = dataMap[key];
-            if (record && record.count > 0 && record.sum !== null) {
-                return record.sum / record.count;
-            } else {
-                return null; 
-            }
+           if (record && record.count > 0 && record.sum !== null) {
+            return record.sum / record.count;
+        } else {
+            // 如果沒有有效數據，返回 null 以便 Plotly 處理為空值，目前返回0
+            return 0;
+        }
         });
     });
         const trace = {
@@ -303,6 +304,7 @@ async function drawChart(month, monthData) {
             reversescale: false,
             zmid: 0, zmin: -1.5, zmax: 1.5,
             zsmooth: 'best', connectgaps: false,
+    
              colorbar: {
                 title: '海溫距平 (°C)',
                 titleside: 'top',  
@@ -323,7 +325,7 @@ async function drawChart(month, monthData) {
             xaxis: { title: '經度 (E)', autotick: true,ticks: 'outside',tickformat: '.1f',  scaleanchor: 'y', scaleratio: 1 },
             yaxis: { title: '緯度 (N)', autotick: true,ticks: 'outside',tickformat: '.1f',  scaleratio: 1 },
             margin: { t: 60, b: 50, l: 60, r: 40 },
-
+            plot_bgcolor: '#f0f0f0',
         };
         Plotly.newPlot('chart', [trace], layout);
     }
