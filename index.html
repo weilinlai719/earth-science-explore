@@ -64,6 +64,7 @@
 <div class="dashboard">
     <div class="page-tabs">
         <button class="tab-btn active" onclick="switchYear('2021', this)">2021年 (反聖嬰)</button>
+        <button class="tab-btn" onclick="switchYear('2015', this)">2015年 (強聖嬰)</button>
         <button class="tab-btn" onclick="switchYear('2023', this)">2023年 (聖嬰)</button>
     </div>
 
@@ -187,10 +188,13 @@ function renderDots() {
         if (currentYear === '2021') {
             months = ["2021-01", "2021-02", "2021-03", "2021-04", "2021-05", "2021-06",
                       "2021-07", "2021-08", "2021-09", "2021-10", "2021-11", "2021-12"];
+        } else if (currentYear === '2015') {
+            months = ["2015-01", "2015-02", "2015-03", "2015-04", "2015-05", "2015-06",
+                      "2015-07", "2015-08", "2015-09", "2015-10", "2015-11", "2015-12"];
         } else if (currentYear === '2023') {
             months = ["2023-01", "2023-02", "2023-03", "2023-04", "2023-05", "2023-06",
                       "2023-07", "2023-08", "2023-09", "2023-10", "2023-11", "2023-12"];
-        }
+        } 
    const dotContainer = document.getElementById('dot-container');
         dotContainer.innerHTML = '';
         months.forEach((m, i) => {

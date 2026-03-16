@@ -2,7 +2,7 @@ import json
 import os
 
 # 設定原始檔案名稱 (請確認檔名是否正確)
-input_files = [r'c:\js\earth-science-explore\sst_taiwan_2021_full.json', r'c:\js\earth-science-explore\sst_taiwan_2023_full.json']
+input_files = [r'c:\js\earth-science-explore\report_summary_2015.json', r'c:\js\earth-science-explore\sst_taiwan_2023_full.json']
 
 def split_json():
     for file_name in input_files:
