@@ -65,7 +65,8 @@
     <div class="page-tabs">
         <button class="tab-btn active" onclick="switchYear('2021', this)">2021年 (反聖嬰)</button>
         <button class="tab-btn" onclick="switchYear('2015', this)">2015年 (強聖嬰)</button>
-        <button class="tab-btn" onclick="switchYear('2023', this)">2023年 (聖嬰)</button>
+        <button class="tab-btn" onclick="switchYear('2016', this)">2016年 (聖嬰)</button>
+         <button class="tab-btn" onclick="switchYear('2023', this)">2023年 (聖嬰)</button>
     </div>
 
     <h1 style="font-size: 2rem;"> 聖嬰/反聖嬰事件：台灣周邊海溫異常分佈</h1>
@@ -194,7 +195,12 @@ function renderDots() {
         } else if (currentYear === '2023') {
             months = ["2023-01", "2023-02", "2023-03", "2023-04", "2023-05", "2023-06",
                       "2023-07", "2023-08", "2023-09", "2023-10", "2023-11", "2023-12"];
-        } 
+        } else if (currentYear === '2016') {
+            months = ["2016-01", "2016-02", "2016-03", "2016-04", "2016-05", "2016-06",
+                      "2016-07", "2016-08", "2016-09", "2016-10", "2016-11", "2016-12"];
+        } else {
+            throw new Error("未知的年份選擇: " + currentYear);
+        }
    const dotContainer = document.getElementById('dot-container');
         dotContainer.innerHTML = '';
         months.forEach((m, i) => {

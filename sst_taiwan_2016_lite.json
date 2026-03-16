@@ -1,0 +1,50 @@
+[
+  {
+    "month": "2016-01",
+    "avg_anomaly": "0.6734"
+  },
+  {
+    "month": "2016-02",
+    "avg_anomaly": "-0.2485"
+  },
+  {
+    "month": "2016-03",
+    "avg_anomaly": "-0.5694"
+  },
+  {
+    "month": "2016-04",
+    "avg_anomaly": "0.1552"
+  },
+  {
+    "month": "2016-05",
+    "avg_anomaly": "0.8007"
+  },
+  {
+    "month": "2016-06",
+    "avg_anomaly": "0.9125"
+  },
+  {
+    "month": "2016-07",
+    "avg_anomaly": "0.7319"
+  },
+  {
+    "month": "2016-08",
+    "avg_anomaly": "0.7365"
+  },
+  {
+    "month": "2016-09",
+    "avg_anomaly": "0.2925"
+  },
+  {
+    "month": "2016-10",
+    "avg_anomaly": "0.7527"
+  },
+  {
+    "month": "2016-11",
+    "avg_anomaly": "0.8895"
+  },
+  {
+    "month": "2016-12",
+    "avg_anomaly": "0.8908"
+  }
+]
