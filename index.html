@@ -302,9 +302,9 @@ async function drawChart(month, monthData) {
             x: lons, y: lats, z: zData,
             type: 'heatmap',
             colorscale: 'RdBu',
-            reversescale: false,
+            reversescale: false,connectgaps: false,
             zmid: 0, zmin: -1.5, zmax: 1.5,
-            zsmooth: 'best', connectgaps: false,
+            zsmooth: 'best', 
     
              colorbar: {
                 title: '海溫距平 (°C)',
