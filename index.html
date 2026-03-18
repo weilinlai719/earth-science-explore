@@ -16,6 +16,9 @@
         .page-tabs { display: flex; justify-content: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .tab-btn { padding: 10px 25px; cursor: pointer; border: none; background: #f0f0f0; margin: 0 5px; border-radius: 5px; font-weight: bold; transition: 0.3s; }
         .tab-btn.active { background: var(--accent-color); color: white; }
+       .hamburger-icon {display: none; flex-direction: column;gap: 5px;cursor: pointer;padding: 10px;width: fit-content;}
+        .hamburger-icon span {width: 25px; height: 3px;background: #1a2a3a;border-radius: 2px;}
+        .tab-group {display: flex; gap: 10px;}
 
         /* 圖片容器與箭頭 */
         .carousel-container { position: relative; display: flex; align-items: center; justify-content: center; margin: 20px 0; background: #f9f9f9; border-radius: 10px; }
@@ -54,7 +57,38 @@
         width: 90%;
     }
     #feature-text { font-size: 2rem;}
+    .page-tabs { 
+        position: relative; 
+        flex-direction: column; 
+        align-items: flex-start; 
+        border-bottom: none;
     }
+
+  .hamburger-icon { display: flex; } 
+
+    .tab-group {
+        display: none; 
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        left: 20px;
+        background: white;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        padding: 10px;
+        border-radius: 8px;
+        z-index: 100;
+        width: 200px;
+    }
+
+    /* 當漢堡被點擊時開啟 */
+    .tab-group.active {
+        display: flex;
+        transform: translateX(-15px);
+    }
+
+    .tab-btn { width: 100%; text-align: left; }
+}
+    
         
     </style>
 </head>
@@ -62,12 +96,20 @@
    
 <div class="main-container">
 <div class="dashboard">
-    <div class="page-tabs">
+  <div class="page-tabs">
+    <div class="hamburger-icon" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="tab-group" id="tab-group">
         <button class="tab-btn active" onclick="switchYear('2021', this)">2021年 (反聖嬰)</button>
         <button class="tab-btn" onclick="switchYear('2015', this)">2015年 (強聖嬰)</button>
         <button class="tab-btn" onclick="switchYear('2016', this)">2016年 (聖嬰)</button>
-         <button class="tab-btn" onclick="switchYear('2023', this)">2023年 (聖嬰)</button>
+        <button class="tab-btn" onclick="switchYear('2023', this)">2023年 (聖嬰)</button>
     </div>
+</div>
 
     <h1 style="font-size: 2rem;"> 聖嬰/反聖嬰事件：台灣周邊海溫異常分佈</h1>
     
@@ -173,13 +215,24 @@
     "2016-06": "AI 分析：後聖嬰時期的熱量釋放效應。由於西太平洋暖池重新調整，台灣周邊海溫達到峰值，需注意後續熱帶氣旋的發展潛力。",
 };
   let currentYearMonths = []; 
-
+function toggleMenu() {
+    //for hamburger menu
+        const menu = document.getElementById('tab-group');
+        menu.classList.toggle('active');
+        console.log("選單狀態:", menu.classList.contains('active'));
+    }
  async function switchYear(year, btn) {
         currentYear = year;
         currentIdx = 0; 
-        
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+
+        // 如果在手機模式（寬度 < 1200px），選完年份後自動關閉選單
+        const menu = document.getElementById('tab-group');
+        if (window.innerWidth <= 1200) {
+            menu.classList.remove('active');
+        }
+      
         
         await init();
     }
