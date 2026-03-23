@@ -1,0 +1,18 @@
+---
+// src/components/footer.astro
+const currentYear = new Date().getFullYear();
+---
+<footer class="footer">
+    <div class="footer-content">
+        <p class="footer-text">資料來源：NOAA OISST V2.1 台灣周邊海域海溫距平資料</p>
+        <p class="footer-text">製作：Weilin Lai &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {currentYear}年3月</p>
+    </div>
+</footer>
+<style>
+    .footer { text-align: center; background-color: #1a2a3a; width: 100%;height: auto;margin-bottom: 0px;padding: 20px 0;  margin-top: auto;  }
+    .footertext { margin-top: 10px; color: #9fafb0; font-size: 0.9rem; }
+    @media screen and (max-width: 1200px) {
+        .footer-text {
+            font-size: 0.8rem;
+        }
+    }
