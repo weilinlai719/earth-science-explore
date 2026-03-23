@@ -3,15 +3,13 @@
   "name": "earth-science-explore",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "@astrojs/image": "^0.4.0",
-    "@astrojs/renderer-preact": "^2.0.0",
-    "@astrojs/renderer-react": "^2.0.0",
-    "@astrojs/renderer-svelte": "^2.0.0",
-    "@astrojs/renderer-vue": "^2.0.0",
-    "@astrojs/tailwind": "^3.0.0",
-    "astro": "^3.0.0"
-  },
+ 
+   "dependencies": {
+    "@astrojs/tailwind": "^5.0.0",
+    "astro": "^3.0.0",
+    "plotly.js-dist": "^2.24.1"
+},
+  
 "scripts": {
   "dev": "astro dev",
   "start": "astro dev",
