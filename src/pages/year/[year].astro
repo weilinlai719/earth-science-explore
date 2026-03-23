@@ -1,8 +1,8 @@
 ---
-import MainLayout from '../layout/mainlayout.astro';
-import Header from '../components/header.astro';
-import Chart from '../components/chart.astro';
-import Footer from '../components/footer.astro';
+import MainLayout from '../../layout/mainlayout.astro';
+import Header from '../../components/header.astro';
+import Chart from '../../components/chart.astro';
+import Footer from '../../components/footer.astro';
 
 // 1. 定義哪些年份需要產生頁面
 export async function getStaticPaths() {
@@ -21,7 +21,6 @@ const { year } = Astro.params;
   <Header />
   <main class="main-container">
     <div class="dashboard">
-      <h1>{year}年 台灣周邊海溫異常分佈</h1>
       <Chart currentYear={year} />
     </div>
     

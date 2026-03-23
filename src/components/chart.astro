@@ -1,8 +1,236 @@
-<div class="carousel-container">
-    <button class="arrow prev" id="prevMonth">&#10094;</button>
-    <div id="chart"></div>
-    <button class="arrow next" id="nextMonth">&#10095;</button>
+---
+// 接收來自 [year].astro 傳入的年份
+const { currentYear: yearProp } = Astro.props;
+---
+
+<div id="chart-container-root" data-year={yearProp}>
+    <div class="carousel-container">
+        <button class="arrow prev" id="prevMonth">&#10094;</button>
+        <div id="chart"></div>
+        <button class="arrow next" id="nextMonth">&#10095;</button>
+    </div>
+    <div class="dots" id="dot-container"></div>
 </div>
-<div class="dots" id="dotContainer"></div>
-<script src="index.js">
+
+<script is:inline>
+    const root = document.getElementById('chart-container-root');
+    const currentYear = root.dataset.year;
+    const basePath = '/earth-science-explore'; 
+
+    let currentIdx = 0;
+    let months = Array.from({length: 12}, (_, i) => `${currentYear}-${String(i + 1).padStart(2, '0')}`);
+    let isProcessing = false;
+        const featureDescriptions = {
+        // 2021 反聖嬰特徵描述
+        //待更改
+        "2021-01": "反聖嬰現象強盛，雖然有冬季冷高壓，但台灣東側海域仍可見明顯正距平。",
+        "2021-02": "暖水持續在台灣南部與東部海域盤據，顯示西太平洋熱含量豐富。",
+        "2021-03": "春季開始，台灣海峽暖化跡象明顯，溫度異常範圍擴大。",
+        "2021-04": "正距平訊號（紅色）轉趨強烈，顯示反聖嬰背景下的海洋蓄熱效應。",
+        "2021-05": "梅雨季前夕，周邊海域溫度普遍偏高，可能增加水氣輸送。",
+        "2021-06": "進入夏季，全海域呈現大面積紅色，距平值達 +1.0°C 以上。",
+        "2021-07": "高溫範圍穩定，黑潮路徑上的異常暖水非常顯著。",
+        "2021-08": "海溫異常達到夏季高峰，台灣周邊幾乎被暖水包圍。",
+        "2021-09": "秋季開始，但反聖嬰導致的暖化訊號未見消退。",
+        "2021-10": "雖然大氣轉涼，但海洋對溫度的反應較慢，維持暖色調。",
+        "2021-11": "台灣海域依然偏暖，與典型冷冬的大氣感官形成對比。",
+        "2021-12": "年底維持溫和正距平，顯示該年海洋熱量輸出極為穩定。",
+        // 2023 聖嬰特徵描述
+        "2023-01": "延續前兩年反聖嬰餘波，台灣附近仍有微弱正距平，但範圍開始縮小。",
+        "2023-02": "海溫距平開始轉趨中性，紅色區塊逐漸被白色（正常）取代。",
+        "2023-03": "聖嬰訊號開始醞釀，台灣周邊出現局部負距平（藍色），顯示熱量外移。",
+        "2023-04": " 海溫波動劇烈，海峽訊號偏弱，整體處於氣候轉折期。",
+        "2023-05": "聖嬰現象正式成形，台灣附近熱量堆積速度減緩，顏色偏淡。",
+        "2023-06": "進入夏季，受全球海洋熱浪影響，距平值再度轉正。",  
+        "2023-07": "聖嬰事件確立，台灣南部海域熱量累積速度加快，呈現粉紅色。",
+        "2023-08": "高溫訊號明顯，聖嬰年的「暖池偏移」效應在此時與夏季高溫疊加。",
+        "2023-09": "異常升溫持續，黑潮主流區顏色加深，距平值接近 +1.5°C。",
+        "2023-10": "聖嬰強盛期，台灣海溫未如往年秋季迅速轉冷，維持顯著暖意。",
+        "2023-11": "聖嬰達到巔峰，台灣周邊海域呈現強烈紅橘色，異常升溫極為明顯。",
+        "2023-12": "年底受聖嬰現象與全球暖化雙重影響，出現明顯「暖冬」海洋訊號。",
+        "2015-01": "年初受大氣環流影響，台灣海域呈現明顯冷距平，平均值約為 -0.71°C。",
+        "2015-06": "聖嬰現象背景下，夏季初期異常增溫，海溫距平躍升至 +0.83°C。",
+        "2015-11": "強聖嬰發展巔峰，冬季前夕海洋熱含量依然豐富，呈現顯著正距平。",
+    // 2016 資料
+        "2016-01": "海峽中冷的範圍少，黑潮強烈",
+        "2016-03": "雖然處於暖年背景，但 3 月出現劇烈降溫，海溫跌至該年最低點 -0.57°C。",
+        "2016-06": "夏季海溫距平達 +0.91°C，為該兩年內最高值，反映強烈的海洋增溫趨勢。",
+        "2016-12": "年底海溫維持穩定正距平，顯示海洋對氣候轉換的反應具備高度慣性。",
+    };
+   const AIfeature = {
+    // 2021 反聖嬰 AI 深度解說
+    "2021-01": "AI 分析：2021年初處於典型反聖嬰事件。西太平洋信風增強，將暖水推向台灣所在的西太平洋，導致海溫較常年平均偏高。雖然正值冬季，但暖化的海洋可能減緩冷氣團南下的冷卻速率。",
+    "2021-02": "AI 分析：觀察到台灣東側黑潮路徑有明顯熱量累積。反聖嬰現象使得西太平洋暖池（Warm Pool）偏西，台灣周邊海域熱含量高，這會導致該年春季大氣濕度較高。" ,
+    "2021-03": "AI 分析：春季海溫距平持續擴大。西太平洋的異常暖水有利於低壓系統萌芽。此時台灣海峽的溫度升高，顯示底層湧升流訊號較弱，整體海洋環境穩定偏暖。",
+    "2021-04": "AI 分析：反聖嬰達到穩定期。此時台灣周邊海溫的正距平（紅色）是全球少數明顯暖區，這種海洋熱力狀態通常預示著隨後梅雨季的水氣補給會相當充沛。",
+    "2021-05": "AI 分析：進入梅雨季，暖海面提供了大量潛熱，有助於滯留鋒面氣旋發展。數據顯示台灣全海域幾乎無冷區，顯示熱力結構極為穩固。",
+    "2021-06": "AI 分析：夏季開始，反聖嬰現象雖有減弱跡象，但海洋具備熱慣性。台灣周邊海溫較往年高出 1.0°C 以上，這會增加夏季午後雷陣雨的強度與頻率。",
+    "2021-07": "AI 分析：太平洋高壓盤據，搭配反聖嬰背景，台灣周邊形成高溫水體。這對於當時經過台灣附近的熱帶氣旋（颱風）提供了極佳的發展能量來源。",
+    "2021-08": "AI 分析：8月數據顯示海溫異常達標，這與反聖嬰引起的西太平洋環流增強有關。台灣周邊海域的蓄熱量處於高位，海溫距平圖呈現深紅色連貫分佈。",
+    "2021-09": "AI 分析：進入秋季，由於海水比熱容大，夏季累積的熱量仍未消散。反聖嬰現象使得台灣周邊維持偏暖狀態，可能導致該年入秋時間較晚。",
+    "2021-10": "AI 分析：大氣環流開始轉向，但海溫距平顯示海洋依然「拒絕變冷」。這種大氣冷、海洋暖的配置，常導致海面產生大量蒸發，增加秋季降雨風險。",
+    "2021-11": "AI 分析：11月通常應開始變冷，但受反聖嬰堆積暖水影響，台灣海溫距平仍維持正值。這在氣候學上是一種強烈的海洋增溫訊號。",
+    "2021-12": "AI 分析：2021年結束之際，西太平洋維持高熱狀態。反聖嬰年份的冬季海洋通常不會提供太多冷平流支持，顯示該年是一次完整的暖海洋事件。",
+
+    // 2023 聖嬰 AI 深度解說
+    "2023-01": "AI 分析：2023年初處於氣候轉折點。雖然地圖上仍有微弱殘餘暖訊號，但聖嬰現象正準備發動，西太平洋暖池開始向東移動，台灣附近的熱能開始減少。",
+    "2023-02": "AI 分析：2月海溫圖呈現大片白色，代表海溫回歸氣候平均值。這是聖嬰現象轉換前的「中性期」，台灣周邊海洋環流趨於穩定。",
+    "2023-03": "AI 分析：出現明顯藍色區塊。聖嬰現象導致西太平洋信風減弱，暖水向東太平洋偏移，西太平洋（台灣附近）出現冷距平。這是典型聖嬰年早期的特徵。",
+    "2023-04": "AI 分析：海溫波動明顯。由於暖水中心移走，台灣周邊垂直湧升流可能增強，帶來深層較冷的海水，導致表面海溫呈現零星的冷訊號。",
+    "2023-05": "AI 分析：聖嬰現象確立，全球海溫在此時開始異常。雖然台灣周邊海溫不高，但全球暖化背景開始與聖嬰疊加，海溫圖顯示出極不穩定的正負轉換。",
+    "2023-06": "AI 分析：進入夏季，台灣海域開始隨全球熱浪升溫。聖嬰年通常會導致台灣夏季降雨分佈改變，此時海溫距平轉正，反映了全球海洋普遍變暖的趨勢。",
+    "2023-07": "AI 分析：7月數據顯示南部海域異常紅。聖嬰年期間，熱帶西太平洋的海氣互動複雜，台灣周邊受副熱帶高壓影響增強，導致表面受日照加熱劇烈。",
+    "2023-08": "AI 分析：聖嬰現象發展至中等強度。雖然暖水中心在遠方，但台灣周邊因局部風場微弱，垂直混合效果差，導致表層海水溫度距平持續攀升。",
+    "2023-09": "AI 分析：9月黑潮區域呈現深紅色。聖嬰年常伴隨全球性的海溫破紀錄現象，台灣周邊熱量累積顯著，可能影響該月份的颱風強度與路徑。",
+    "2023-10": "AI 分析：強聖嬰期。台灣海域海溫不降反升，這反映了聖嬰對大氣環流的遙傳影響（Teleconnection），減弱了東北季風初期的冷卻能力。",
+    "2023-11": "AI 分析：11月地圖呈現強烈紅色，距平值逼近 1.5°C。這反映了 2023 年強聖嬰事件的高峰。即使到了11月，台灣海洋仍處於異常高熱狀態，是典型的暖冬前兆。",
+    "2023-12": "AI 分析：年底數據顯示全球海洋熱能釋放。聖嬰現象配合全球暖化，使 2023 年 12 月台灣海域海溫極度異常偏高，這對冬季漁業資源分佈將產生巨大影響。",
+    "2015-11": "AI 分析：觀測到強聖嬰現象對區域環流的遙傳影響，減弱了冬季季風的冷卻力，導致台灣海域熱能異常堆積。",
+    "2016-03": "AI 分析：此為典型的「氣候雜訊」干擾，短期強冷空氣覆蓋西太平洋，造成海表溫度短暫劇降，但不改變長期偏暖趨勢。",
+    "2016-06": "AI 分析：後聖嬰時期的熱量釋放效應。由於西太平洋暖池重新調整，台灣周邊海溫達到峰值，需注意後續熱帶氣旋的發展潛力。",
+};
+    function syncTextToYearPage() {
+      const targetMonth = months[currentIdx];
+      
+      const label = document.getElementById('month-label');
+      const text = document.getElementById('feature-text');
+      const activeTab = document.querySelector('.taber-btn.active');
+      
+      if (label) label.innerText = targetMonth;
+      if (text) {
+          const isAI = activeTab && activeTab.innerText.includes("AI");
+          text.innerText = isAI ? (AIfeature[targetMonth] || "暫無分析。") : (featureDescriptions[targetMonth] || "暫無描述。");
+      }
+  }
+    async function drawChart(month, monthData) {
+        if (!monthData) return;
+        const lats = [...new Set(monthData.map(d => Number(d.lat)))].sort((a, b) => a - b);
+        const lons = [...new Set(monthData.map(d => Number(d.lon)))].sort((a, b) => a - b);
+        const dataMap = {};
+        monthData.forEach(d => {
+            const key = `${Number(d.lat).toFixed(3)}_${Number(d.lon).toFixed(3)}`;
+            dataMap[key] = d.v;
+        });
+        const zData = lats.map(lat => lons.map(lon => dataMap[`${lat.toFixed(3)}_${lon.toFixed(3)}`] || 0));
+
+        const trace = {
+            x: lons, y: lats, z: zData,
+            type: 'heatmap',
+            colorscale: 'RdBu',
+            reversescale: false,connectgaps: false,
+            zmid: 0, zmin: -1.5, zmax: 1.5,
+            zsmooth: 'best', 
+    
+             colorbar: {
+                title: '海溫距平 (°C)',
+                titleside: 'top',  
+                titlefont: { size: 14, color: '#333',padding: 15, },
+                ticks: 'outside',
+                tickformat: '.1f',
+                len: 1.0,   
+                thickness: 30,    
+                yanchor: 'middle',
+                y: 0.5,
+                outlinecolor: '#ddd',  
+                outlinewidth: 1
+}
+        };
+          const layout = {
+            title: { text: `<b>${month} 台灣海域海溫距平 (月平均)</b>`, font: { size: 28 } },
+            xaxis: { title: '經度 (E)', autotick: true,ticks: 'outside',tickformat: '.1f',  scaleanchor: 'y', scaleratio: 1 },
+            yaxis: { title: '緯度 (N)', autotick: true,ticks: 'outside',tickformat: '.1f',  scaleratio: 1 },
+            margin: { l: 120, r: 80, b: 50, t: 80 },
+           
+        };
+
+        
+        Plotly.react('chart', [trace], layout);
+    }
+           
+       
+
+
+    async function updateUI() {
+        const targetMonth = months[currentIdx];
+        
+        const label = document.getElementById('month-label');
+        if (label) label.innerText = targetMonth;
+
+        try {
+            const res = await fetch(`${basePath}/data/${targetMonth}.json`);
+            if (!res.ok) throw new Error('檔案不存在');
+            const data = await res.json();
+            syncTextToYearPage();
+            await drawChart(targetMonth, data);
+            updateDots();
+            const activeTab = document.querySelector('.taber-btn.active');
+            if (activeTab) activeTab.click(); 
+            
+        } catch (err) {
+            console.error("載入失敗:", err);
+            document.getElementById('chart').innerHTML = `<div style="padding:20px">找不到 ${targetMonth}.json<br>請確認檔案已放在 public/data/ 下</div>`;
+        }
+        document.getElementById('prevMonth').onclick = () => { currentIdx = (currentIdx - 1 + 12) % 12; updateUI(); };
+  document.getElementById('nextMonth').onclick = () => { currentIdx = (currentIdx + 1) % 12; updateUI(); };
+
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('taber-btn')) {
+          document.querySelectorAll('.taber-btn').forEach(b => b.classList.remove('active'));
+          e.target.classList.add('active');
+          syncTextToYearPage();
+          }});
+    }
+
+    // 3. 圓點與按鈕邏輯
+    function updateDots() {
+        const container = document.getElementById('dot-container');
+        container.innerHTML = '';
+        months.forEach((_, i) => {
+            const dot = document.createElement('span');
+            dot.className = `dot ${i === currentIdx ? 'active' : ''}`;
+            dot.onclick = () => { currentIdx = i; updateUI(); };
+            container.appendChild(dot);
+        });
+    }
+
+    document.getElementById('prevMonth').onclick = () => { currentIdx = (currentIdx - 1 + 12) % 12; updateUI(); };
+    document.getElementById('nextMonth').onclick = () => { currentIdx = (currentIdx + 1) % 12; updateUI(); };
+    document.addEventListener('keydown', async (e) => {
+    // 防止快速連續按鍵造成讀取衝突
+    if (isProcessing) return;
+
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+        // 向右鍵或空白鍵：下個月
+        e.preventDefault(); // 防止空白鍵捲動網頁
+        isProcessing = true;
+        currentIdx = (currentIdx + 1) % 12;
+        await updateUI(); 
+        isProcessing = false;
+    } 
+    else if (e.key === 'ArrowLeft') {
+        // 向左鍵：上個月
+        isProcessing = true;
+        currentIdx = (currentIdx - 1 + 12) % 12;
+        await updateUI();
+        isProcessing = false;
+    }
+});
+    // 初始化
+    updateUI();
 </script>
+
+<style>
+    .carousel-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        max-width: 850px; 
+        margin: 0 auto;   
+    }
+    #chart { width: 100%; height: 500px; }
+    .arrow { background: #eee; border: none; padding: 10px 15px; cursor: pointer; border-radius: 50%; }
+    .dots { display: flex; justify-content: center; gap: 5px; margin-top: 10px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; cursor: pointer; }
+    .dot.active { background: #3498db; }
+</style>

@@ -1,8 +1,7 @@
 <header class="navbar">
   <div class="nav-container">
     <div class="nav-logo">
-      <img src="/favicon.svg" alt="Logo" class="logo-img" />
-      <span class="logo-text">Taiwan<span class="dot-md">.sst</span></span>
+      <span class="logo-text">Earth Science</span>
     </div>
 
     <div class="hamburger-icon" id="menuToggle">
@@ -11,18 +10,15 @@
 
     <nav class="nav-menu" id="navMenu">
       <div class="nav-links">
-        <a href="/year/2021" class="nav-item">2021 (反聖嬰)</a>
-        <a href="/year/2015" class="nav-item">2015 (強聖嬰)</a>
-        <a href="/year/2016" class="nav-item">2016 (聖嬰)</a>
-        <a href="/year/2023" class="nav-item">2023 (聖嬰)</a>
+       <a href="/earth-science-explore/year/2021" class="nav-item">2021 (反聖嬰)</a>
+    <a href="/earth-science-explore/year/2015" class="nav-item">2015 (強聖嬰)</a>
+    <a href="/earth-science-explore/year/2016" class="nav-item">2016 (聖嬰)</a>
+    <a href="/earth-science-explore/year/2023" class="nav-item">2023 (聖嬰)</a>
       </div>
     </nav>
 
     <div class="nav-actions">
-      <button class="btn-icon">🔍</button>
-      <div class="lang-switch">
-        <button class="lang-btn active">中文</button>
-        <button class="lang-btn">EN</button>
+        <a href="/earth-science-explore/result" class="nav-item">觀察結果</a>
       </div>
     </div>
   </div>
@@ -44,7 +40,7 @@
     align-items: center;
     justify-content: space-between;
   }
-  .nav-logo { font-size: 1.5rem; font-weight: bold; display: flex; align-items: center; gap: 8px; }
+ 
   .dot-md { color: #3b82f6; }
   .nav-links { display: flex; gap: 15px; }
   .nav-item {
@@ -58,16 +54,4 @@
         .page-tabs { display: flex; justify-content: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .tab-btn { padding: 10px 25px; cursor: pointer; border: none; background: #f0f0f0; margin: 0 5px; border-radius: 5px; font-weight: bold; transition: 0.3s; }
         .tab-btn.active { background: var(--accent-color); color: white; }
-       .hamburger-icon {display: none; flex-direction: column;gap: 5px;cursor: pointer;padding: 10px;width: fit-content;}
-        .hamburger-icon span {width: 25px; height: 3px;background: #1a2a3a;border-radius: 2px;}
-        .tab-group {display: flex; gap: 10px;}
-@media screen and (max-width: 1200px) {
-     /* 當漢堡被點擊時開啟 */
-    .tab-group.active {
-        display: flex;
-        transform: translateX(-15px);
-    }
-
-    .tab-btn { width: 100%; text-align: left; }
-    }
 </style>

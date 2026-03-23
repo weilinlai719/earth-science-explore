@@ -1,15 +1,18 @@
 ---
 const { title } = Astro.props;
+import Footer from '../components/footer.astro';
 ---
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
-    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js" is:inline></script>
+    <link rel="icon" href="/earth-science-explore/earthicon.png" />
+    <script is:inline src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
 </head>
 <body>
-    <slot /> 
+    <slot />
+    
 </body>
 </html>
 
