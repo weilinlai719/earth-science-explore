@@ -1,19 +1,31 @@
 ---
-// src/pages/index.astro
 import MainLayout from '../layout/mainlayout.astro';
 import Header from '../components/header.astro';
 import Chart from '../components/chart.astro';
 import Footer from '../components/footer.astro';
+
+// 1. 定義哪些年份需要產生頁面
+export async function getStaticPaths() {
+  return [
+    { params: { year: '2015' } },
+    { params: { year: '2016' } },
+    { params: { year: '2021' } },
+    { params: { year: '2023' } },
+  ];
+}
+
+const { year } = Astro.params;
 ---
-<mainLayout>
-    <div class="main-container">
-        <div class="dashboard">
-            <header/>
-            <h1>聖嬰/反聖嬰事件：台灣周邊海溫異常分佈</h1>
-            <chart />
-        </div>
-        
-        <div class="dashboarder">
+
+<MainLayout title={`${year}年 海溫異常分析`}>
+  <Header />
+  <main class="main-container">
+    <div class="dashboard">
+      <h1>{year}年 台灣周邊海溫異常分佈</h1>
+      <Chart currentYear={year} />
+    </div>
+    
+    <div class="dashboarder">
             <div class="type-tab">
                 <button class="taber-btn active">特徵分析</button>
                 <button class="taber-btn">AI解說</button>
@@ -23,6 +35,6 @@ import Footer from '../components/footer.astro';
                 <p id="feature-text">正在載入數據...</p>
             </div>
         </div>
-    </div>
-    <footer />
-</mainLayout>
+  </main>
+  <Footer />
+</MainLayout>
