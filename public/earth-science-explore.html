@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="earthicon.png"></link>
+    <title>聖嬰現象探索：台灣海域海溫分析</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * { box-sizing: border-box;margin: 0;padding: 0; }
+        :root { --primary-color: #2c3e50; --accent-color: #3498db; }
+        body { display: flex; flex-direction: column;font-family: "Microsoft JhengHei", sans-serif; background: #f4f7f9;width: 100%;overflow-x: hidden; min-height: 100vh;}
+        .main-container { flex: 1;display: flex;flex-direction: row; align-items: flex-start;  gap: 40px; width: 1250px; max-width: 95vw;margin: 0 auto 50px auto;min-height: 90vh;padding-top: 30px;}
+        .dashboard { width: 900px; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+        
+        /* 分頁切換按鈕 */
+        .page-tabs { display: flex; justify-content: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .tab-btn { padding: 10px 25px; cursor: pointer; border: none; background: #f0f0f0; margin: 0 5px; border-radius: 5px; font-weight: bold; transition: 0.3s; }
+        .tab-btn.active { background: var(--accent-color); color: white; }
+       .hamburger-icon {display: none; flex-direction: column;gap: 5px;cursor: pointer;padding: 10px;width: fit-content;}
+        .hamburger-icon span {width: 25px; height: 3px;background: #1a2a3a;border-radius: 2px;}
+        .tab-group {display: flex; gap: 10px;}
+
+        /* 圖片容器與箭頭 */
+        .carousel-container { position: relative; display: flex; align-items: center; justify-content: center; margin: 20px 0; background: #f9f9f9; border-radius: 10px; }
+        #chart { width:80%; height: 500px; }
+        .arrow { cursor: pointer; position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.2); color: white; border: none; padding: 15px; border-radius: 50%; width: 55px;height: 55px; transition: 0.3s; z-index: 10; }
+        .arrow:hover { background: var(--primary-color); }
+        .prev { left: 10px; }
+        .next { right: 10px; }
+        
+        /* 下方分頁點 */
+        .dots { margin-top: 10px; }
+        .dot { height: 10px; width: 10px; background-color: #bbb; border-radius: 50%; display: inline-block; margin: 0 5px; cursor: pointer; }
+        .dot.active { background-color: var(--primary-color); }
+
+        .dashboarder { flex: 0 0 330px;min-width: 300px; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+        .type-tab { display: flex; justify-content: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .taber-btn { padding: 10px 25px; cursor: pointer; border: none; background: #f0f0f0; margin: 0 5px; border-radius: 5px; font-weight: bold; transition: 0.3s; }
+        .taber-btn.active { background: var(--accent-color); color: white; }
+        /* 月份標籤與文字描述 */
+        .info-section { margin-top: 20px; text-align: left; padding: 10px;  }
+        .month-tag { display: inline-block; background: var(--primary-color); color: white; padding: 5px 15px; border-radius: 5px; font-weight: bold; margin-bottom: 10px; }
+        #feature-text { font-size: 1.1rem; line-height: 1.6; color: #687374; height:auto; width: 100%;padding-top:10px;  }
+        .footer { text-align: center; background-color: #1a2a3a; width: 100%;height: auto;margin-bottom: 0px;padding: 20px 0;  margin-top: auto;  }
+        .footertext { margin-top: 10px; color: #9fafb0; font-size: 0.9rem; }
+    
+        @media screen and (max-width: 1200px) {
+            h1 { font-size: 20px; }
+            #chart { height: 450px; }
+            .main-container {
+        flex-direction: column;
+        align-items: center;
+        max-width: 100vw;
+        width: 100%;
+    }
+    .dashboard, .dashboarder {
+        width: 90%;
+    }
+    #feature-text { font-size: 2rem;}
+    .page-tabs { 
+        position: relative; 
+        flex-direction: column; 
+        align-items: flex-start; 
+        border-bottom: none;
+    }
+
+  .hamburger-icon { display: flex; } 
+
+    .tab-group {
+        display: none; 
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        left: 20px;
+        background: white;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        padding: 10px;
+        border-radius: 8px;
+        z-index: 100;
+        width: 200px;
+    }
+
+    /* 當漢堡被點擊時開啟 */
+    .tab-group.active {
+        display: flex;
+        transform: translateX(-15px);
+    }
+
+    .tab-btn { width: 100%; text-align: left; }
+}
+    
+        
+    </style>
+</head>
+<body>
+   
+<div class="main-container">
+<div class="dashboard">
+  <div class="page-tabs">
+    <div class="hamburger-icon" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="tab-group" id="tab-group">
+        <button class="tab-btn active" onclick="switchYear('2021', this)">2021年 (反聖嬰)</button>
+        <button class="tab-btn" onclick="switchYear('2015', this)">2015年 (強聖嬰)</button>
+        <button class="tab-btn" onclick="switchYear('2016', this)">2016年 (聖嬰)</button>
+        <button class="tab-btn" onclick="switchYear('2023', this)">2023年 (聖嬰)</button>
+    </div>
+</div>
+
+    <h1 style="font-size: 2rem;"> 聖嬰/反聖嬰事件：台灣周邊海溫異常分佈</h1>
+    
+    <div class="carousel-container">
+        <button class="arrow prev" onclick="changeMonth(-1)">&#10094;</button>
+        <div id="chart"></div>
+        <button class="arrow next" onclick="changeMonth(1)">&#10095;</button>
+    </div>
+
+    <div class="dots" id="dot-container"></div>
+</div>
+<div class="dashboarder">
+     <div class="type-tab">
+        <button class="taber-btn active" onclick="changecommemtry('feature',this)">特徵分析</button>
+        <button class="taber-btn" onclick="changecommemtry('AI',this)">AI解說</button>
+    </div>
+    <div class="info-section">
+        <div class="month-tag" id="month-label">載入中...</div>
+        <p id="feature-text">正在載入數據...</p>
+    </div>
+    </div>
+    </div>
+
+<div class="footer">
+    <p class="footertext">資料來源：NOAA OISST V2.1 台灣周邊海域海溫距平資料</p>
+    <p class="footertext">製作：Weilin Lai &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2026年3月</p>
+</div>
+</body>
+<script src="index.js"> 
+</script>
+</body>
+</html>
