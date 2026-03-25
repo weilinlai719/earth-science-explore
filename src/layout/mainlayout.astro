@@ -1,11 +1,11 @@
 ---
-const { year } = Astro.props;
+const { title } = Astro.props;
 ---
 <html lang="zh-TW">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{year}年 海溫異常分析</title>
+    <title>{title}</title>
     <link rel="icon" href="/earth-science-explore/earthicon.png" />
     <script is:inline src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
 </head>
