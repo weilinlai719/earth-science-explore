@@ -5,6 +5,16 @@ import Header from '../components/header.astro';
 import Footer from '../components/footer.astro';
 return Astro.redirect('/earth-science-explore/year/2021');
 ---
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+  <meta http-equiv="refresh" content="0;url=/earth-science-explore/year/2021/" />
+    <script is:inline>
+        // 使用 JS 立即跳轉，這比 meta refresh 快
+        window.location.pathname = '/earth-science-explore/year/2021/';
+    </script>
+</head>
+
 <MainLayout>
     <div class="main-container">
         <div class="dashboard">
@@ -26,3 +36,4 @@ return Astro.redirect('/earth-science-explore/year/2021');
     </div>
     <Footer />
 </MainLayout>
+</html>
