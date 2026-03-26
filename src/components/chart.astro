@@ -149,38 +149,57 @@ const { currentYear: yearProp } = Astro.props;
        
 
 
+   let monthCache = {}; 
+
+    async function preloadData() {
+        console.log(`正在預載 ${currentYear} 年份數據...`);
+        for (const m of months) {
+            if (!monthCache[m]) {
+    
+                fetch(`${basePath}/data/${m}.json`)
+                    .then(res => res.json())
+                    .then(data => {
+                        monthCache[m] = data;
+                        console.log(`${m} 預載完成`);
+                    })
+                    .catch(err => console.error(`${m} 預載失敗`, err));
+            }
+        }
+    }
+
+
     async function updateUI() {
         const targetMonth = months[currentIdx];
-        
         const label = document.getElementById('month-label');
         if (label) label.innerText = targetMonth;
 
         try {
-            const res = await fetch(`${basePath}/data/${targetMonth}.json`);
-            if (!res.ok) throw new Error('檔案不存在');
-            const data = await res.json();
+            let data;
+         
+            if (monthCache[targetMonth]) {
+                data = monthCache[targetMonth];
+            } else {
+             
+                const res = await fetch(`${basePath}/data/${targetMonth}.json`);
+                if (!res.ok) throw new Error('檔案不存在');
+                data = await res.json();
+                monthCache[targetMonth] = data; 
+            }
+
             syncTextToYearPage();
             await drawChart(targetMonth, data);
             updateDots();
-            const activeTab = document.querySelector('.taber-btn.active');
-            if (activeTab) activeTab.click(); 
             
         } catch (err) {
             console.error("載入失敗:", err);
-            document.getElementById('chart').innerHTML = `<div style="padding:20px">找不到 ${targetMonth}.json<br>請確認檔案已放在 public/data/ 下</div>`;
+            document.getElementById('chart').innerHTML = `<div style="padding:20px">找不到 ${targetMonth}.json</div>`;
         }
-        document.getElementById('prevMonth').onclick = () => { currentIdx = (currentIdx - 1 + 12) % 12; updateUI(); };
-  document.getElementById('nextMonth').onclick = () => { currentIdx = (currentIdx + 1) % 12; updateUI(); };
-
-    document.addEventListener('click', (e) => {
-      if (e.target.classList.contains('taber-btn')) {
-          document.querySelectorAll('.taber-btn').forEach(b => b.classList.remove('active'));
-          e.target.classList.add('active');
-          syncTextToYearPage();
-          }});
     }
 
-    // 3. 圓點與按鈕邏輯
+    updateUI();
+    preloadData();
+
+  
     function updateDots() {
         const container = document.getElementById('dot-container');
         container.innerHTML = '';
