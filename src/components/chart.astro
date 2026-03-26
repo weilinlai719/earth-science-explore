@@ -214,19 +214,15 @@ const { currentYear: yearProp } = Astro.props;
     document.getElementById('prevMonth').onclick = () => { currentIdx = (currentIdx - 1 + 12) % 12; updateUI(); };
     document.getElementById('nextMonth').onclick = () => { currentIdx = (currentIdx + 1) % 12; updateUI(); };
     document.addEventListener('keydown', async (e) => {
-    // 防止快速連續按鍵造成讀取衝突
     if (isProcessing) return;
-
     if (e.key === 'ArrowRight' || e.key === ' ') {
-        // 向右鍵或空白鍵：下個月
-        e.preventDefault(); // 防止空白鍵捲動網頁
+        e.preventDefault(); 
         isProcessing = true;
         currentIdx = (currentIdx + 1) % 12;
         await updateUI(); 
         isProcessing = false;
     } 
     else if (e.key === 'ArrowLeft') {
-        // 向左鍵：上個月
         isProcessing = true;
         currentIdx = (currentIdx - 1 + 12) % 12;
         await updateUI();
