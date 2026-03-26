@@ -220,14 +220,14 @@ const { currentYear: yearProp } = Astro.props;
         isProcessing = true;
         currentIdx = (currentIdx + 1) % 12;
         await updateUI(); 
-        await new Promise(resolve => setTimeout(resolve, 50));
+        await new Promise(resolve => setTimeout(resolve, 60));
         isProcessing = false;
     } 
     else if (e.key === 'ArrowLeft') {
         isProcessing = true;
         currentIdx = (currentIdx - 1 + 12) % 12;
         await updateUI();
-        await new Promise(resolve => setTimeout(resolve, 50));
+        await new Promise(resolve => setTimeout(resolve, 60));
         isProcessing = false;
     }
 });
