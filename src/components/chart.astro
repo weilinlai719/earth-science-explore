@@ -15,7 +15,7 @@ const { currentYear: yearProp } = Astro.props;
     const root = document.getElementById('chart-container-root');
     const currentYear = root.dataset.year;
     const basePath = '/earth-science-explore'; 
-
+    
     let currentIdx = 0;
     let months = Array.from({length: 12}, (_, i) => `${currentYear}-${String(i + 1).padStart(2, '0')}`);
     let isProcessing = false;

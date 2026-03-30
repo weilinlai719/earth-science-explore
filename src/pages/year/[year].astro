@@ -27,8 +27,8 @@ const { year } = Astro.params;
     
     <div class="dashboarder">
             <div class="type-tab">
-                <button class="taber-btn active">特徵分析</button>
-                <button class="taber-btn">AI解說</button>
+                <button class="taber-btn active"onclick="changecommemtry('feature',this)">特徵分析</button>
+                <button class="taber-btn" onclick="changecommemtry('AI',this)">AI解說</button>
             </div>
             <div class="info-section">
                 <div class="month-tag" id="month-label">載入中...</div>
@@ -38,3 +38,16 @@ const { year } = Astro.params;
   </main>
   <Footer />
 </MainLayout>
+<script is:inline>
+async function changecommemtry(type, btn) {
+        document.querySelectorAll('.taber-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+         const targetMonth = months[currentIdx];
+        if (type == 'feature') {
+            document.getElementById('feature-text').innerText = featureDescriptions[targetMonth] || "此月份海溫隨氣候現象發展呈現動態變動，觀察重點在於距平值的正負轉換。";
+        } else if (type == 'AI') {
+            document.getElementById('feature-text').innerText =AIfeature[targetMonth] || "根據目前的海溫距平分佈，台灣周邊海域在此月份呈現出明顯的暖化趨勢，這可能與當前的氣候模式和全球暖化趨勢有關。建議持續關注未來幾個月的變化，以評估對台灣氣候的潛在影響。";
+        }
+
+    }
+    </script>
