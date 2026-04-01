@@ -226,7 +226,7 @@ async function drawChart(month, monthData) {
             colorscale: 'RdBu',
             reversescale: false,connectgaps: false,
             zmid: 0, zmin: -1.5, zmax: 1.5,
-            zsmooth: 'best', 
+             
     
              colorbar: {
                 title: '海溫距平 (°C)',
