@@ -5,11 +5,16 @@
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{setspace}
+\usepackage{aligned-overset}
+\usepackage{anyfontsize}
+\usepackage{t1enc}
 \usepackage[a4paper, margin=2.45cm]{geometry}
 % 標楷體
 \setCJKmainfont[AutoFakeBold=3, AutoFakeSlant=.2]{DFKai-SB}
 % \titleformat{章節層級}[形狀]{字體設定}{標號}{標號與標題間距}{標題前指令}
 % \fontsize{字號}{行距}
+\emergencystretch=1em
+\sloppy
 \titleformat{\section}{\fontsize{18}{22}\bfseries}{\thesection}{1em}{}
 \titlespacing{\section}{0pt}{1.5ex plus .1ex minus .2ex}{1pc}
 \titleformat{\subsection}{\fontsize{14}{17}\bfseries}{\thesubsection}{1em}{}
@@ -24,7 +29,8 @@
 我們針對聖嬰現象與反聖嬰現象對台灣西海域的影響進行了深入研究，
 通過分析歷史數據和模擬結果，最終發現聖嬰現象會導致台灣西半部海域的水溫升高。
 而反聖嬰現象則會導致水溫下降。至於氣溫方面，聖嬰年各地的溫度明顯較平均高出許多，
-而反聖嬰雖也升溫但整體升溫幅度並不高。年平均溫則較低。\\
+而反聖嬰雖也升溫但整體升溫幅度並不高。年平均溫則較低。
+\bigskip
 
 {\fontsize{14}{19}\bfseries \selectfont
  本研究以代表性年份進行初步比較：2016年為聖嬰年，2021年為反聖嬰年。
@@ -169,11 +175,17 @@
 全球暖化的影響還是很劇烈。
 }
 \newpage
-{\titlespacing*{\section}{0pt}{1.5ex plus .1ex minus .2ex}{1pc}
+
 \section{參考文獻}
-\href{https://coastwatch.pfeg.noaa.gov}{NOAA SST Data}\\
-\href{https://weilinlai719.github.io/earth-science-explore/}{探究website}\\
-\href{https://www.cwa.gov.tw/Data/climate/Watch/twn/twn-monitor_2021-6.pdf}{CWA\ 2021年7月氣象監測報告}\\
+\href{https://coastwatch.pfeg.noaa.gov}{NOAA SST Data}
+
+\href{https://weilinlai719.github.io/earth-science-explore/}{探究website}
+
+\href{https://www.cwa.gov.tw/Data/climate/Watch/twn/twn-monitor_2021-6.pdf}{CWA\ 2021年7月氣象監測報告}
+
 \href{https://www.cwa.gov.tw/Data/climate/Watch/twn/twn-monitor_2016-6.pdf}{CWA\ 2016年7月氣象監測報告}
-}
+ \vfill 
+\begin{center}
+    {\fontsize{32}{40}\selectfont \LaTeX}
+\end{center}
 \end{document}
