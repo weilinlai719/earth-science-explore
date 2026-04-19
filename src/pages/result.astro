@@ -10,10 +10,76 @@ import Footer from '../components/footer.astro';
 <div class="main-container">
     <div class="bashboard">
         <h1>聖嬰/反聖嬰事件：台灣周邊海溫異常分佈</h1>
-        <p style="font-size: 1.4rem;margin-top: 0px;">聖嬰事件（El Niño）和反聖嬰事件（La Niña）是全球氣候系統中的重要現象，對台灣周邊的海溫異常分佈有顯著影響。以下是這些事件對台灣周邊海溫異常分佈的觀察結果：</p>
-        <p>1. 聖嬰事件期間，台灣周邊的海溫通常會出現異常升高，尤其是在太平洋中東部和南美洲沿岸地區。這種升高的海溫會影響台灣的氣候，導致夏季更熱、更乾燥，並增加颱風的強度和頻率。</p>
-        <p>2. 反聖嬰事件期間，台灣周邊的海溫通常會出現異常降低，尤其是在太平洋中東部和南美洲沿岸地區。這種降低的海溫會影響台灣的氣候，導致夏季較涼爽、較潮濕，並減少颱風的強度和頻率。</p>
-        <p>3. 這些海溫異常分佈的變化對台灣的農業、漁業和水資源管理等方面產生重要影響。了解這些事件對海溫異常分佈的影響，有助於台灣更好地應對氣候變化帶來的挑戰。</p>
+   <section class="research-results" style="line-height: 1.7; color: #2c3e50; max-width: 1000px; margin: 0 auto; padding: 40px; font-family: 'Times New Roman', 'Noto Sans TC', serif;">
+
+    <header style="text-align: center; margin-bottom: 50px;">
+        <h1 style="font-size: 2em; letter-spacing: 2px; border-bottom: 2px solid #2c3e50; display: inline-block; padding-bottom: 10px;">研究分析分析與定量實證</h1>
+        <p style="color: #7f8c8d; margin-top: 15px;">Analysis of Sea-Air Coupling and Climatic Variability in the Taiwan Region</p>
+    </header>
+
+    <div style="margin-bottom: 40px;">
+        <h3 style="background: #2c3e50; color: #fff; padding: 10px 20px; border-radius: 5px;">壹、海氣溫連動性之定量分析</h3>
+        <p>
+            本研究透過 2012-2021 年之十年尺度數據進行回歸分析，結果顯示台灣海域海溫距平（SSTA）與陸地氣溫距平具備顯著正相關性。
+        </p>
+        <div style="display: flex; justify-content: space-around; background: #f4f7f6; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #dcdde1;">
+            <div style="text-align: center;">
+                <span style="display: block; font-size: 0.9em; color: #7f8c8d;">相關係數 (Coefficient of Determination)</span>
+                <strong style="font-size: 1.8em; color: #c0392b;">R² ≈ 0.78</strong>
+            </div>
+            <div style="text-align: center;">
+                <span style="display: block; font-size: 0.9em; color: #7f8c8d;">耦合強度 (Coupling Strength)</span>
+                <strong style="font-size: 1.8em; color: #2980b9;">極高 (Highly Correlated)</strong>
+            </div>
+        </div>
+        <p>
+            數據特徵指出，2016 年（強聖嬰年）之樣本點位居第一象限極端值，證實了<strong>大規模沉降氣流</strong>與<strong>海洋熱含量累積</strong>之疊加效應，是驅動區域極端高溫的核心動力。
+        </p>
+    </div>
+
+    <div style="margin-bottom: 40px;">
+        <h3 style="background: #2c3e50; color: #fff; padding: 10px 20px; border-radius: 5px;">貳、區域環境之熱力反應異質性</h3>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <thead>
+                <tr style="background-color: #ecf0f1; border-bottom: 2px solid #bdc3c7;">
+                    <th style="padding: 15px; text-align: left;">觀測區域</th>
+                    <th style="padding: 15px; text-align: left;">物理特性與反應機制</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 15px; font-weight: bold;">台灣西部淺海 (Taiwan Strait)</td>
+                    <td style="padding: 15px;">水深較淺且熱容量低，對大氣輻射迫效（Radiative Forcing）反應劇烈，易產生極端正距平現象。</td>
+                </tr>
+                <tr>
+                    <td style="padding: 15px; font-weight: bold;">東部黑潮路徑 (Kuroshio Path)</td>
+                    <td style="padding: 15px;">受深層暖流輸送影響，熱力慣性較大，表現出較高之溫度穩定性，然在全球暖化趨勢下仍呈現持續升溫。</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-bottom: 40px;">
+        <h3 style="background: #2c3e50; color: #fff; padding: 10px 20px; border-radius: 5px;">參、ENSO 變率與全球暖化之疊加效應</h3>
+        <p>
+            綜合分析證實，台灣夏季氣候受 <strong>ENSO 年際變率 (Interannual Variability)</strong>、<strong>副熱帶高壓動力調整</strong>與<strong>全球暖化長期趨勢 (Long-term Trend)</strong> 三者交互作用：
+        </p>
+        <ul style="padding-left: 20px; list-style-type: square;">
+            <li><strong>物理路徑：</strong> 聖嬰現象誘發沃克環流東移 → 西太平洋高壓沉降增強 → 海氣溫同步飆升。</li>
+            <li><strong>背景偏移：</strong> 2019 與 2020 年之非典型樣本顯示，即使在 ENSO 中性年份，氣溫距平仍達 +0.7°C。</li>
+        </ul>
+        <p style="background: #fdf2f2; border-left: 5px solid #e74c3c; padding: 15px; margin-top: 15px;">
+            <strong>結論：</strong> 氣候基準值（Climate Baseline）已發生偏移。當前氣候環境下，年際波動係建立於逐年抬升的背景溫標之上，導致極端高溫頻率與強度顯著增加。
+        </p>
+    </div>
+
+    <footer style="margin-top: 60px; border-top: 1px solid #eee; padding-top: 20px; font-size: 0.85em; color: #95a5a6; text-align: justify;">
+        <p>
+            *註：本分析受限於樣本容量（N=10），黑潮強度指標係透過 SSTA 分佈進行間接推論，未來應納入衛星高度計（Satellite Altimetry）與原位觀測（In-situ Observation）數據以強化因果論證之嚴密性。
+        </p>
+    </footer>
+
+</section>
     </div>
 </div>
     <Footer  />
