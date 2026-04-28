@@ -39,9 +39,9 @@ This project investigates how large-scale climate oscillations (ENSO) interact w
 ---
 
 ## 📂 Repository Structure
-```text
-├── src/                # Astro website source code
-├── scripts/            # Python data slicing and processing scripts
-├── data/               # Processed JSON/CSV datasets from NOAA
-├── report/             # LaTeX source (.tex) and compiled PDF
-└── public/             # Static assets and Plotly interactive charts
+* `.github/workflows/`: CI/CD configurations for automated deployment.
+* `public/`: Static assets including high-resolution figures and processed data files.
+    * `working/`: Python notebooks and scripts for data "cutting" and statistical analysis.
+* `src/`: Astro source code for the inquiry website.
+* `README.md`: Project documentation.
+* `astro.config.mjs` & `package.json`: Project dependencies and configuration.
