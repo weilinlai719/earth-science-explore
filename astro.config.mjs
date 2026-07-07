@@ -4,7 +4,7 @@ import tailwind from "@astrojs/tailwind";
 export default defineConfig({
   site: 'https://weilinlai719.github.io',
   outDir: 'dist',
-  base: '/earth-science-explore',
+  base: '/personal/',
   integrations: [tailwind()],
   output: 'static',
   build: {
